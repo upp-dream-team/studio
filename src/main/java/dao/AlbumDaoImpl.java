@@ -22,7 +22,7 @@ public class AlbumDaoImpl implements AlbumDao {
 	
 	public List<Album> get() {
 
-		String SQL = "select * from albums";
+		String SQL = "select * from album";
 		List <Album> albums = jdbcTemplate.query(SQL, new AlbumRowMapper());
 		return albums;
 	}
