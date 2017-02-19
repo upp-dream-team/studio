@@ -27,6 +27,9 @@ import org.springframework.stereotype.Component;
 
 import models.Musician;
 import services.MusicianService;
+import util.IconBuilder;
+import util.JTableButtonMouseListener;
+import util.JTableButtonRenderer;
 
 @Component
 public class MusicianEventProcessorImpl  implements MusicianEventProcessor{
@@ -158,7 +161,7 @@ public class MusicianEventProcessorImpl  implements MusicianEventProcessor{
 	}
 
 	private JButton buildDeleteMusicianButton(final Musician musician) {
-		Icon deleteIcon = createImageIcon("/icons/delete.png","Edit Musician");
+		Icon deleteIcon = IconBuilder.createImageIcon("/icons/delete.png","Edit Musician");
 		JButton deleteBtn = new JButton(deleteIcon);
 		deleteBtn.setBackground(Color.WHITE);
 		deleteBtn.setBorderPainted(false);
@@ -186,7 +189,7 @@ public class MusicianEventProcessorImpl  implements MusicianEventProcessor{
 	}
 
 	private JButton buildEditMusicianButton(final Musician musician) {
-		Icon editIcon = createImageIcon("/icons/edit.png","Edit Musician");
+		Icon editIcon = IconBuilder.createImageIcon("/icons/edit.png","Edit Musician");
 		JButton editBtn = new JButton(editIcon);
 		editBtn.setBackground(Color.WHITE);
 		editBtn.setBorderPainted(false);
@@ -290,7 +293,7 @@ public class MusicianEventProcessorImpl  implements MusicianEventProcessor{
 		createMusicianPanel.setBackground(Color.WHITE);
 		createMusicianPanel.setPreferredSize(preferredSize);
 		
-		Icon addIcon = createImageIcon("/icons/add.png","Add Musician");
+		Icon addIcon = IconBuilder.createImageIcon("/icons/add.png","Add Musician");
 		JButton addMusicianBtn = new JButton("Add Musician",addIcon);
 		addMusicianBtn.setBackground(Color.WHITE);
 		addMusicianBtn.addActionListener(new ActionListener() {
@@ -403,47 +406,6 @@ public class MusicianEventProcessorImpl  implements MusicianEventProcessor{
 		searchPanel.add(searchBtn);
 		return searchPanel;
 	}
+		
 	
-	private static ImageIcon createImageIcon(String path,
-      String description) {
-      java.net.URL imgURL = MusicianEventProcessorImpl.class.getResource(path);
-      
-      if (imgURL != null) {
-         return new ImageIcon(imgURL, description);
-      } else {            
-         System.err.println("Couldn't find file: " + path);
-         return null;
-      }
-   }
-	
-	private static class JTableButtonRenderer implements TableCellRenderer {        
-	    public java.awt.Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-	        JButton button = (JButton)value;
-	        return button;  
-	    }
-	}
-	
-	private static class JTableButtonMouseListener extends MouseAdapter {
-        private final JTable table;
-        private final int rowHeight;
-
-        public JTableButtonMouseListener(JTable table, int rowHeight) {
-            this.table = table;
-            this.rowHeight = rowHeight;
-        }
-
-        public void mouseClicked(MouseEvent e) {
-            int column = table.getColumnModel().getColumnIndexAtX(e.getX()); // get the coloum of the button
-            int row    = e.getY()/rowHeight;
-
-                    /*Checking the row or column is valid or not*/
-            if (row < table.getRowCount() && row >= 0 && column < table.getColumnCount() && column >= 0) {
-                Object value = table.getValueAt(row, column);
-                if (value instanceof JButton) {
-                    /*perform a click event*/
-                    ((JButton)value).doClick();
-                }
-            }
-        }
-    }
 }

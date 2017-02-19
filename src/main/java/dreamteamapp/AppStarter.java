@@ -27,6 +27,9 @@ public class AppStarter {
 	
 	@Autowired
 	private MusicianEventProcessor muscianEventProcessor;
+	
+	@Autowired
+	private RecordEventProcessor recordEventProcessor;
 
 	public AppStarter() {
 
@@ -55,6 +58,7 @@ public class AppStarter {
 		MenuButton songs = new MenuButton("Songs", alignmentX);
 		MenuButton instruments = new MenuButton("Instruments", alignmentX);
 		MenuButton financial = new MenuButton("Financial Affairs", alignmentX);
+		MenuButton sales = new MenuButton("Sales", alignmentX);
 
 		albums.addActionListener(new ActionListener() {
 
@@ -78,6 +82,20 @@ public class AppStarter {
 			}
 		});
 		
+		sales.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent e) {
+				contentPanel.removeAll();
+				JPanel salesPanel = recordEventProcessor.process(contentPanel.getSize());
+				salesPanel.setPreferredSize(contentPanel.getSize());
+				contentPanel.add(salesPanel);
+				contentPanel.revalidate();
+				contentPanel.repaint();
+				
+			}
+			
+		});
+		
 		container.add(menuPanel, BorderLayout.WEST);
 		container.add(contentPanel, BorderLayout.EAST);
 		container.setVisible(true);
@@ -88,6 +106,7 @@ public class AppStarter {
 		menuPanel.add(songs);
 		menuPanel.add(instruments);
 		menuPanel.add(financial);
+		menuPanel.add(sales);
 
 		JPanel contentPanelWrapper = new JPanel();
 		contentPanelWrapper.setLayout(new BorderLayout());

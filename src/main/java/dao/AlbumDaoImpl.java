@@ -8,7 +8,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import models.Album;
+import models.Musician;
 import rowmappers.AlbumRowMapper;
+import rowmappers.MusicianRowMapper;
 
 @Repository
 public class AlbumDaoImpl implements AlbumDao {
@@ -36,8 +38,8 @@ public class AlbumDaoImpl implements AlbumDao {
 		 * */
 		
 		String query = "select * from album where id = ?";
-		//Album album = (Album)jdbcTemplate.queryForObject(query, new Object[] )
-		return null;
+		Album album = (Album)jdbcTemplate.queryForObject(query, new Object[] { id }, new AlbumRowMapper());
+		return album;
 	}
 
 	public int insert(Album album) {
