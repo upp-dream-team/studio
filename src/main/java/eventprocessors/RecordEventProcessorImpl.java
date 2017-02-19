@@ -10,7 +10,6 @@ import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -21,12 +20,11 @@ import javax.swing.table.TableCellRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import models.Musician;
+import eventprocessorhelpers.JTableButtonMouseListener;
+import eventprocessorhelpers.JTableButtonRenderer;
+import eventprocessorhelpers.SwingUtils;
 import models.Record;
 import services.RecordService;
-import util.IconBuilder;
-import util.JTableButtonMouseListener;
-import util.JTableButtonRenderer;
 
 @Component
 public class RecordEventProcessorImpl implements RecordEventProcessor {
@@ -128,7 +126,7 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 	}
 
 	private JButton buildEditButton(Record r) {
-		Icon editIcon = IconBuilder.createImageIcon("/icons/edit.png","Edit");
+		Icon editIcon = SwingUtils.createImageIcon("/icons/edit.png","Edit");
 		JButton b = new JButton(editIcon);
 		b.setBackground(Color.WHITE);
 		b.setBorderPainted(false);
@@ -146,7 +144,7 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 	}
 
 	private JButton buildDeleteButton(final Record r) {
-		Icon deleteIcon = IconBuilder.createImageIcon("/icons/delete.png","Delete");
+		Icon deleteIcon = SwingUtils.createImageIcon("/icons/delete.png","Delete");
 		JButton b = new JButton(deleteIcon);
 		b.setBackground(Color.WHITE);
 		b.setBorderPainted(false);

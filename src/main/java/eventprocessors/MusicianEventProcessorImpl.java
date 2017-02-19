@@ -25,9 +25,6 @@ import eventprocessorhelpers.JTableButtonRenderer;
 import eventprocessorhelpers.SwingUtils;
 import models.Musician;
 import services.MusicianService;
-import util.IconBuilder;
-import util.JTableButtonMouseListener;
-import util.JTableButtonRenderer;
 
 @Component
 public class MusicianEventProcessorImpl  implements MusicianEventProcessor{
