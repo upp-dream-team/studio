@@ -34,4 +34,12 @@ public class MusicianServiceImpl  implements MusicianService{
 		musicianDao.delete(id);
 	}
 
+	public List<String> getMuscianNames() {
+		return musicianDao.getMusicianNames();
+	}
+
+	public Musician getByName(String name) {
+		return musicianDao.getByName(name);
+	}
+
 }

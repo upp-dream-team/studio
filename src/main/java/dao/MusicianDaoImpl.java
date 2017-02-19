@@ -1,5 +1,6 @@
 package dao;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -56,6 +57,17 @@ public class MusicianDaoImpl  implements MusicianDao{
 			String query = "SELECT COUNT(*) FROM musician";
 			return jdbcTemplate.queryForObject(query, Integer.class);
 		}
+	}
+
+	public List<String> getMusicianNames() {
+		String query = "SELECT musician.name FROM musician";
+		return jdbcTemplate.queryForList(query, String.class);
+	}
+
+	public Musician getByName(String name) {
+		String sql = "SELECT * FROM musician WHERE LOWER(name) LIKE ? LIMIT 1";
+		Musician musician = (Musician)jdbcTemplate.queryForObject(sql, new Object[] { "%"+name.toLowerCase()+"%" }, new MusicianRowMapper());
+		return musician;
 	}
 
 }

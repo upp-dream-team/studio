@@ -60,7 +60,7 @@ public class AppStarter {
 
 			public void actionPerformed(ActionEvent e) {
 				contentPanel.removeAll();
-				contentPanel.add(albumEventProcessor.process());
+				contentPanel.add(albumEventProcessor.process(contentPanel.getSize()));
 				contentPanel.revalidate();
 				contentPanel.repaint();
 			}

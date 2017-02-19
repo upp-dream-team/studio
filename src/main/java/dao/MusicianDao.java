@@ -12,4 +12,6 @@ public interface MusicianDao {
 	public int update(Musician musician);
 	public int delete(int id);
 	public int getNumOfMusicians(String filterQuery);
+	public List<String> getMusicianNames();
+	public Musician getByName(String name);
 }

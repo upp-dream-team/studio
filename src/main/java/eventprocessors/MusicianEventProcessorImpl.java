@@ -7,11 +7,8 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.List;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -21,10 +18,11 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
+import eventprocessorhelpers.JTableButtonMouseListener;
+import eventprocessorhelpers.JTableButtonRenderer;
+import eventprocessorhelpers.SwingUtils;
 import models.Musician;
 import services.MusicianService;
 
@@ -128,6 +126,8 @@ public class MusicianEventProcessorImpl  implements MusicianEventProcessor{
 	      
         model.setColumnIdentifiers(new Object[] { "#", "Name", "Phone", "","" });
         JTable table = new JTable(model);
+        table.setCellSelectionEnabled(false);
+        table.setRowSelectionAllowed(false);
         table.getColumnModel().getColumn(0).setPreferredWidth(musicianListPanel.getPreferredSize().width/10);
         table.getColumnModel().getColumn(1).setPreferredWidth(4*musicianListPanel.getPreferredSize().width/10);
         table.getColumnModel().getColumn(2).setPreferredWidth(3*musicianListPanel.getPreferredSize().width/10);
@@ -138,13 +138,13 @@ public class MusicianEventProcessorImpl  implements MusicianEventProcessor{
         table.getColumnModel().getColumn(3).setCellRenderer(buttonRenderer);
         table.getColumnModel().getColumn(4).setCellRenderer(buttonRenderer);
         if(musicians.size() == 0) {
-        	model.insertRow(0, new Object[]{ "", "No results" , "" , "" });
+        	model.insertRow(0, new Object[]{ "", "No results" , "" , null, null });
         } else {
         	rowHeight = musicianListPanel.getPreferredSize().height/12;
         	for (int i = 0; i < musicians.size(); ++i){
         		JButton editBtn = buildEditMusicianButton(musicians.get(i));
         		JButton deleteBtn = buildDeleteMusicianButton(musicians.get(i));
-                model.insertRow(i, new Object[]{ ((currentPage-1)*musiciansPerPage+i+1)+"", musicians.get(i).getName() , musicians.get(i).getPhone(),editBtn, deleteBtn });
+                model.insertRow(i, new Object[]{ ""+((currentPage-1)*musiciansPerPage+i+1), musicians.get(i).getName() , musicians.get(i).getPhone(),editBtn, deleteBtn });
                 table.setRowHeight(i, rowHeight);
             }
         }
@@ -158,7 +158,7 @@ public class MusicianEventProcessorImpl  implements MusicianEventProcessor{
 	}
 
 	private JButton buildDeleteMusicianButton(final Musician musician) {
-		Icon deleteIcon = createImageIcon("/icons/delete.png","Edit Musician");
+		Icon deleteIcon = SwingUtils.createImageIcon("/icons/delete.png","Edit Musician");
 		JButton deleteBtn = new JButton(deleteIcon);
 		deleteBtn.setBackground(Color.WHITE);
 		deleteBtn.setBorderPainted(false);
@@ -186,7 +186,7 @@ public class MusicianEventProcessorImpl  implements MusicianEventProcessor{
 	}
 
 	private JButton buildEditMusicianButton(final Musician musician) {
-		Icon editIcon = createImageIcon("/icons/edit.png","Edit Musician");
+		Icon editIcon = SwingUtils.createImageIcon("/icons/edit.png","Edit Musician");
 		JButton editBtn = new JButton(editIcon);
 		editBtn.setBackground(Color.WHITE);
 		editBtn.setBorderPainted(false);
@@ -290,7 +290,7 @@ public class MusicianEventProcessorImpl  implements MusicianEventProcessor{
 		createMusicianPanel.setBackground(Color.WHITE);
 		createMusicianPanel.setPreferredSize(preferredSize);
 		
-		Icon addIcon = createImageIcon("/icons/add.png","Add Musician");
+		Icon addIcon = SwingUtils.createImageIcon("/icons/add.png","Add Musician");
 		JButton addMusicianBtn = new JButton("Add Musician",addIcon);
 		addMusicianBtn.setBackground(Color.WHITE);
 		addMusicianBtn.addActionListener(new ActionListener() {
@@ -403,47 +403,4 @@ public class MusicianEventProcessorImpl  implements MusicianEventProcessor{
 		searchPanel.add(searchBtn);
 		return searchPanel;
 	}
-	
-	private static ImageIcon createImageIcon(String path,
-      String description) {
-      java.net.URL imgURL = MusicianEventProcessorImpl.class.getResource(path);
-      
-      if (imgURL != null) {
-         return new ImageIcon(imgURL, description);
-      } else {            
-         System.err.println("Couldn't find file: " + path);
-         return null;
-      }
-   }
-	
-	private static class JTableButtonRenderer implements TableCellRenderer {        
-	    public java.awt.Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-	        JButton button = (JButton)value;
-	        return button;  
-	    }
-	}
-	
-	private static class JTableButtonMouseListener extends MouseAdapter {
-        private final JTable table;
-        private final int rowHeight;
-
-        public JTableButtonMouseListener(JTable table, int rowHeight) {
-            this.table = table;
-            this.rowHeight = rowHeight;
-        }
-
-        public void mouseClicked(MouseEvent e) {
-            int column = table.getColumnModel().getColumnIndexAtX(e.getX()); // get the coloum of the button
-            int row    = e.getY()/rowHeight;
-
-                    /*Checking the row or column is valid or not*/
-            if (row < table.getRowCount() && row >= 0 && column < table.getColumnCount() && column >= 0) {
-                Object value = table.getValueAt(row, column);
-                if (value instanceof JButton) {
-                    /*perform a click event*/
-                    ((JButton)value).doClick();
-                }
-            }
-        }
-    }
 }
