@@ -7,6 +7,13 @@
   <description>Studio Managing System developed by The Dream Team</description>
   <dependencies>
     
+    <!-- https://mvnrepository.com/artifact/org.jdatepicker/jdatepicker -->
+	<dependency>
+    	<groupId>org.jdatepicker</groupId>
+    	<artifactId>jdatepicker</artifactId>
+    	<version>1.3.4</version>
+	</dependency>
+    
     <!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->
 	<dependency>
     	<groupId>org.springframework</groupId>

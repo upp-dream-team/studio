@@ -10,4 +10,6 @@ public interface MusicianService {
 	public void createMusician(Musician m);
 	public void updateMusician(Musician musician);
 	public void deleteMusician(int id);
+	public List<String> getMuscianNames();
+	public Musician getByName(String name);
 }
