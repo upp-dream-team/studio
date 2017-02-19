@@ -43,7 +43,7 @@ public class MusicianDaoImpl  implements MusicianDao{
 	}
 
 	public int delete(int id) {
-		String query = "DELETE musician WHERE id = ?";
+		String query = "DELETE FROM musician WHERE id = ?";
 		return jdbcTemplate.update(query, new Object[] {id});
 	}
 

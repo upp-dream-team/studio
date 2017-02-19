@@ -26,4 +26,12 @@ public class MusicianServiceImpl  implements MusicianService{
 		musicianDao.insert(m);
 	}
 
+	public void updateMusician(Musician musician) {
+		musicianDao.update(musician);	
+	}
+
+	public void deleteMusician(int id) {
+		musicianDao.delete(id);
+	}
+
 }
