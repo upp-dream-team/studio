@@ -7,6 +7,7 @@ import models.Musician;
 public interface AlbumService {
 	
 	public List<Album> get(int limit, int offset, String filterQuery);
+	public List<String> getAlbumTitles();
 	public int getNumOfAlbums(String filterQuery);
 	public void createAlbum(Album a);
 	public void updateAlbum(Album a);

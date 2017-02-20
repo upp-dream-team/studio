@@ -36,7 +36,7 @@ public class AppStarter {
 		JFrame frame = new JFrame("Studio");
 		frame.setResizable(false);
 		frame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
-		//frame.setSize(new Dimension(1000, 500));
+		//frame.setSize(new Dimension(1200, 700));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		JPanel container = new JPanel();

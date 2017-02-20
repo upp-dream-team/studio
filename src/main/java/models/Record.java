@@ -10,6 +10,7 @@ public class Record {
 	private int quantity;
 	private int albumId; //костыль
 	private Album album;
+	private int sellingId;
 
 	public int getId() {
 		return id;
@@ -57,6 +58,14 @@ public class Record {
 
 	public void setAlbumId(int albumId) {
 		this.albumId = albumId;
+	}
+
+	public int getSellingId() {
+		return sellingId;
+	}
+
+	public void setSellingId(int sellingId) {
+		this.sellingId = sellingId;
 	}
 
 }

@@ -8,6 +8,7 @@ import models.Musician;
 public interface AlbumDao {
 	
 	public List<Album> get(int limit, int offset, String filterQuery);
+	public List<String> getAlbumTitles();
 	public Album getById(int id);
 	public int insert(Album album);
 	public int update(Album album);

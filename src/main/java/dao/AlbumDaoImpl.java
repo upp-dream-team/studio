@@ -17,7 +17,7 @@ public class AlbumDaoImpl implements AlbumDao {
 	  
 	public List<Album> get(int limit, int offset, String filterQuery) {
 		if(filterQuery != null && !filterQuery.trim().isEmpty()) {
-			String SQL = "SELECT * FROM album WHERE LOWER(musician.title) LIKE ? LIMIT ? OFFSET ?";
+			String SQL = "SELECT * FROM album WHERE LOWER(album.title) LIKE ? LIMIT ? OFFSET ?";
 			String wildcard = "%"+filterQuery.toLowerCase()+"%";
 			List <Album> albums = jdbcTemplate.query(SQL, new Object[]{wildcard, limit, offset},  new AlbumRowMapper());
 			return albums;
@@ -60,5 +60,10 @@ public class AlbumDaoImpl implements AlbumDao {
 			String query = "SELECT COUNT(*) FROM album";
 			return jdbcTemplate.queryForObject(query, Integer.class);
 		}
+	}
+
+	public List<String> getAlbumTitles() {
+		String query = "SELECT title FROM album";
+		return jdbcTemplate.queryForList(query, String.class);
 	}
 }

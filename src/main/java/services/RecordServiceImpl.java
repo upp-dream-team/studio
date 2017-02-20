@@ -31,8 +31,7 @@ public class RecordServiceImpl implements RecordService{
 	}
 
 	public void createRecord(Record r) {
-		// TODO Auto-generated method stub
-		
+		recordDao.insert(r);
 	}
 
 	public void updateRecord(Record r) {

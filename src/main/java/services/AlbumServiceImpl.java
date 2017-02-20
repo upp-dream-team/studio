@@ -32,6 +32,10 @@ public class AlbumServiceImpl implements AlbumService{
 	public void deleteAlbum(int id) {
 		albumDao.delete(id);
 	}
+
+	public List<String> getAlbumTitles() {
+		return albumDao.getAlbumTitles();
+	}
 	
 
 }
