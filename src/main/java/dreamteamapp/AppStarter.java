@@ -109,6 +109,7 @@ public class AppStarter {
 		menuPanel.add(sales);
 
 		JPanel contentPanelWrapper = new JPanel();
+		contentPanel.setBackground(Color.WHITE);
 		contentPanelWrapper.setLayout(new BorderLayout());
 		JSeparator separator = new JSeparator(JSeparator.VERTICAL);
 		separator.setBackground(new Color(100, 100, 100));

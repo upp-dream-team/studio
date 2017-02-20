@@ -35,7 +35,7 @@ public class RecordDaoImpl implements RecordDao {
 	}
 
 	public Record getById(int id) {
-		String query = "select * from record INNER JOIN sellings ON record.selling_id=sellings.id where id = ?";
+		String query = "select * from record INNER JOIN sellings ON record.selling_id=sellings.id where record.id = ?";
 		Record record = (Record) jdbcTemplate.queryForObject(query, new Object[] { id }, new RecordRowMapper());
 		return record;
 	}

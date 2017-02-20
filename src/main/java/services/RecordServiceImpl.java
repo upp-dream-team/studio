@@ -35,13 +35,11 @@ public class RecordServiceImpl implements RecordService{
 	}
 
 	public void updateRecord(Record r) {
-		// TODO Auto-generated method stub
-		
+		recordDao.update(r);
 	}
 
 	public void deleteRecord(int id) {
-		// TODO Auto-generated method stub
-		
+		recordDao.delete(id);
 	}
 
 }

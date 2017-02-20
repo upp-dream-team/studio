@@ -59,11 +59,11 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 		System.out.println("in RecordEventProcessor");
 		mainPanel = new JPanel();
 		mainPanel.setPreferredSize(sizeOfParentElement);
-		mainPanel.setBackground(Color.white);
+		mainPanel.setBackground(Color.WHITE);
 		mainPanel.setLayout(new BorderLayout());
 		
 		searchAndCreatePanelPreferredSize = new Dimension(mainPanel.getPreferredSize().width,mainPanel.getPreferredSize().height/7);
-		listPanelPreferredSize = new Dimension(mainPanel.getPreferredSize().width, (int)(4.5*mainPanel.getPreferredSize().height)/7);
+		listPanelPreferredSize = new Dimension(mainPanel.getPreferredSize().width, (int)(4*mainPanel.getPreferredSize().height)/7);
 		paginationPanelPreferredSize = new Dimension(mainPanel.getPreferredSize().width, mainPanel.getPreferredSize().height/7);
 		
 		JPanel searchPanel = buildSearchAndCreatePanel(searchAndCreatePanelPreferredSize);
@@ -79,18 +79,20 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 	
 	private JPanel buildRecordList(Dimension preferredSize, int limit, int start, String query){
 		JPanel res = new JPanel(new BorderLayout());
+		res.setBackground(Color.BLUE);
 		res.setPreferredSize(preferredSize);
 		rowHeight = mainPanel.getPreferredSize().height/20;
 		
-		List<Record> records = recordService.getRecords("", start, start+limit);
-		JScrollPane recordTable = buildRecordTable(records, preferredSize);
+		List<Record> records = recordService.getRecords(query, start, start+limit);
+		JTable recordTable = buildRecordTable(records, preferredSize);
 		
+		res.add(recordTable.getTableHeader(), BorderLayout.NORTH);
 		res.add(recordTable, BorderLayout.CENTER);
 		
 		return res;
 	}
 
-	private JScrollPane buildRecordTable(List<Record> records, Dimension preferredSize) {
+	private JTable buildRecordTable(List<Record> records, Dimension preferredSize) {
 		int numRecords = records.size();
 		
 		DefaultTableModel model = new DefaultTableModel() {
@@ -142,25 +144,118 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 			model.insertRow(i, data);
 		}
 		table.getTableHeader().setBackground(Color.WHITE);
+		table.setBackground(Color.WHITE);
 		table.addMouseListener(new JTableButtonMouseListener(table, rowHeight));
-		return new JScrollPane(table);
+		return table;
 	}
 
-	private JButton buildEditButton(Record r) {
+	private JButton buildEditButton(final Record r) {
 		Icon editIcon = SwingUtils.createImageIcon("/icons/edit.png","Edit");
 		JButton b = new JButton(editIcon);
 		b.setBackground(Color.WHITE);
 		b.setBorderPainted(false);
 		
-		b.addActionListener(new ActionListener(){
-
-			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
-				JOptionPane.showMessageDialog(null, "You want to edit (cap)");
-			}
+		b.addActionListener(new ActionListener() {
 			
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Edit button " + r.getId());
+				BorderLayout layout = (BorderLayout) mainPanel.getLayout();
+				mainPanel.remove(layout.getLayoutComponent(BorderLayout.NORTH));
+				
+				JPanel editFormPanel = new JPanel();
+				editFormPanel.setBorder(new EmptyBorder(10, 10, 30, 10));
+				editFormPanel.setSize(searchAndCreatePanelPreferredSize);
+				editFormPanel.setLayout(new GridLayout(4, 2));
+				
+				JLabel dateL = new JLabel("Date");
+				JLabel nameL = new JLabel("Client Name");
+				JLabel quantityL = new JLabel("Quantity");
+
+				final JTextField dateInput = new JTextField(40);
+				dateInput.setText(r.getDate().toString());
+				final JTextField nameInput = new JTextField(40);
+				nameInput.setText(r.getClient());
+				final JTextField quantityInput = new JTextField(40);
+				quantityInput.setText(r.getQuantity()+"");
+				
+				JButton cancelBtn = new JButton("Cancel");
+				JButton saveBtn = new JButton("Save Changes");
+				
+				cancelBtn.addActionListener(new ActionListener() {
+					
+					public void actionPerformed(ActionEvent e) {
+						BorderLayout layout = (BorderLayout) mainPanel.getLayout();
+						mainPanel.remove(layout.getLayoutComponent(BorderLayout.NORTH));
+						mainPanel.add(buildSearchAndCreatePanel(searchAndCreatePanelPreferredSize),BorderLayout.NORTH);
+						mainPanel.revalidate();
+						mainPanel.repaint();
+					}
+				});
+				
+				saveBtn.addActionListener(new ActionListener() {
+					
+					public void actionPerformed(ActionEvent e) {
+						String name = nameInput.getText().trim();
+						String date = dateInput.getText().trim();
+						String quantity = quantityInput.getText().trim();
+						
+						if(date == null || date.isEmpty()) {
+							JOptionPane.showMessageDialog(null, "Field 'Date' is required");
+						} else if(name == null || name.isEmpty()) {
+							JOptionPane.showMessageDialog(null, "Field 'Client Name' is required");
+						} else if(quantity == null || quantity.isEmpty()){
+							JOptionPane.showMessageDialog(null, "Field 'Quantity' is required");
+						}else{
+							r.setClient(name);
+							DateFormat formatter = new SimpleDateFormat("yyyy-mm-dd"); 
+							try {
+								r.setDate((Date)formatter.parse(date));
+							} catch (ParseException e2) {
+								JOptionPane.showMessageDialog(null, "Incorrect date format");
+							}
+							try{
+								r.setQuantity(Integer.parseInt(quantity));
+							}catch(NumberFormatException e1){
+								JOptionPane.showMessageDialog(null, "Quantity must be integer");
+							}
+							try {
+								recordService.updateRecord(r);
+							} catch(Exception ex) {
+								JOptionPane.showMessageDialog(null, "Failed to update the record in the DB");
+							}
+							currentPage = 1;
+							mainPanel.removeAll();
+							JPanel searchAndCreatePanel = buildSearchAndCreatePanel(searchAndCreatePanelPreferredSize);
+							JPanel musicianListPanel = buildRecordList(listPanelPreferredSize, recordsPerPage, 0, null);
+							JPanel paginationBarPanel = buildPaginationPanel(paginationPanelPreferredSize);
+							
+							mainPanel.add(searchAndCreatePanel, BorderLayout.NORTH);
+							mainPanel.add(musicianListPanel, BorderLayout.CENTER);
+							mainPanel.add(paginationBarPanel, BorderLayout.SOUTH);
+							
+							mainPanel.revalidate();
+							mainPanel.repaint();
+							
+						}
+					}
+					
+				});
+				
+				editFormPanel.add(dateL);
+				editFormPanel.add(dateInput);
+				editFormPanel.add(nameL);
+				editFormPanel.add(nameInput);
+				editFormPanel.add(quantityL);
+				editFormPanel.add(quantityInput);
+				editFormPanel.add(cancelBtn);
+				editFormPanel.add(saveBtn);
+				
+				mainPanel.add(editFormPanel, BorderLayout.NORTH);
+				mainPanel.revalidate();
+				mainPanel.repaint();
+				
+			}
 		});
-		
 		return b;
 	}
 
@@ -173,8 +268,23 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 		b.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				int dialogResult = JOptionPane.showConfirmDialog (null, "Do you really want to delete record No. "+r.getId()+"?");
+				int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure you want to delete this record?");
+				if(dialogResult == JOptionPane.YES_OPTION){
+					recordService.deleteRecord(r.getId());
+					
+					mainPanel.removeAll();
+					currentPage = 1;
+					JPanel searchAndCreatePanel = buildSearchAndCreatePanel(searchAndCreatePanelPreferredSize);
+					JPanel albumListPanel = buildRecordList(listPanelPreferredSize, recordsPerPage, 0, null);
+					JPanel paginationBarPanel = buildPaginationPanel(paginationPanelPreferredSize);
+					
+					mainPanel.add(searchAndCreatePanel, BorderLayout.NORTH);
+					mainPanel.add(albumListPanel, BorderLayout.CENTER);
+					mainPanel.add(paginationBarPanel, BorderLayout.SOUTH);
+					
+					mainPanel.revalidate();
+					mainPanel.repaint();
+				}
 			}
 			
 		});
@@ -185,8 +295,9 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 	private JPanel buildPaginationPanel(final Dimension preferredSize) {
 		int n = recordService.getNumOfRecords(currentFilterQuery);
 		JPanel paginationPanel = new JPanel();
-		//paginationPanel.setBackground(Color.WHITE);
+		paginationPanel.setBackground(Color.WHITE);
 		paginationPanel.setLayout(new FlowLayout());
+		paginationPanel.setBorder(new EmptyBorder(50, 0, 50, 0));
 		
 		if(n > recordsPerPage) {
 			int i = 0;
@@ -258,7 +369,6 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 				final JComboBox albumList = new JComboBox(albumService.getAlbumTitles().toArray());
 				final JTextField quantityInput = new JTextField(40);
 				
-				JPanel inputPanel = new JPanel();
 				JButton cancelBtn = new JButton("Cancel");
 				JButton saveBtn = new JButton("Save");
 				
@@ -336,8 +446,8 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 				form.add(albumList);
 				form.add(quantityL);
 				form.add(quantityInput);
-				form.add(saveBtn);
 				form.add(cancelBtn);
+				form.add(saveBtn);
 				
 				mainPanel.add(form, BorderLayout.NORTH);
 				
