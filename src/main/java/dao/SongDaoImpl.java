@@ -1,11 +1,9 @@
 package dao;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
 import models.Song;
 import rowmappers.SongRowMapper;
 
@@ -22,8 +20,8 @@ public class SongDaoImpl implements SongDao {
 			List <Song> songs = jdbcTemplate.query(SQL, new Object[]{wildcard, wildcard, limit, offset},  new SongRowMapper());
 			return songs;
 		} else {
-			String SQL = "SELECT * FROM song LIMIT ? OFFSET ?";
-			List <Song> songs = jdbcTemplate.query(SQL, new Object[]{ limit, offset},  new SongRowMapper());
+			String query = "SELECT * FROM song LIMIT ? OFFSET ?";
+			List <Song> songs = jdbcTemplate.query(query, new Object[]{ limit, offset},  new SongRowMapper());
 			return songs;
 		}
 	}

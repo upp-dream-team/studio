@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DateFormat;
@@ -20,8 +21,11 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
@@ -212,26 +216,75 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 		editBtn.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
-				BorderLayout layout = (BorderLayout) mainPanel.getLayout();
-				mainPanel.remove(layout.getLayoutComponent(BorderLayout.NORTH));
+				songsToAddToAlbum = album.getSongs();
+				System.out.println("In edit form");
+				for(Song s : songsToAddToAlbum) {
+					System.out.println(""+s.getId()+"  "+s.getTitle());
+				}
+				mainPanel.removeAll();
 				
-				JPanel editAlbumFormPanel = new JPanel();
-				editAlbumFormPanel.setBorder(new EmptyBorder(10, 10, 30, 10));
-				editAlbumFormPanel.setSize(searchAndCreatePanelPreferredSize);
-				editAlbumFormPanel.setLayout(new GridLayout(2,2));
+				JPanel createAlbumFormPanel = new JPanel();
+				createAlbumFormPanel.setBorder(new EmptyBorder(10, 10, 30, 10));
+				createAlbumFormPanel.setSize(searchAndCreatePanelPreferredSize);
+				createAlbumFormPanel.setLayout(new GridLayout(1,3));
 				
-				JLabel titleLabel = new JLabel("Title");
+				JButton cancelBtn = new JButton("Cancel");
+				JPanel labelPanel = new JPanel();
+				labelPanel.setBackground(Color.WHITE);
+				labelPanel.setLayout(new GridLayout(15, 1,15,15));
+				labelPanel.add(new JLabel("Title", SwingConstants.RIGHT));
+				labelPanel.add(new JLabel("Record Date",SwingConstants.RIGHT));
+				labelPanel.add(new JLabel("Price", SwingConstants.RIGHT));
+				labelPanel.add(new JLabel("Musician Royalties", SwingConstants.RIGHT));
+				labelPanel.add(new JLabel("Producer", SwingConstants.RIGHT));
+				labelPanel.add(new JLabel("Producer Royalties", SwingConstants.RIGHT));
+				labelPanel.add(new JLabel("", SwingConstants.RIGHT));
+				labelPanel.add(cancelBtn);
+				
+				JButton saveBtn = new JButton("Save");
 				final JTextField titleInput = new JTextField(40);
 				titleInput.setText(album.getTitle());
-				JButton cancelBtn = new JButton("Cancel");
-				JButton saveBtn = new JButton("Save Changes");
+				final JTextField recorDateInput = new JTextField(40);
+				DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+				recorDateInput.setText(formatter.format(album.getRecordDate()));
+				final JTextField priceInput = new JTextField(40);
+				priceInput.setText(album.getPrice()+"");
+				final JTextField musicianRoyaltiesInput = new JTextField(40);
+				musicianRoyaltiesInput.setText(""+album.getMusicianRoyalties());
+				final JTextField producerRoyalriesInput = new JTextField(40);
+				producerRoyalriesInput.setText(""+album.getProducerRoyalties());
+				final JComboBox producerList = new JComboBox(musicianService.getMuscianNames().toArray());				 
+				JPanel inputPanel = new JPanel();
+				inputPanel.setBackground(Color.WHITE);
+				inputPanel.setBorder(new EmptyBorder(0, 50, 0, 30));
+				inputPanel.setLayout(new GridLayout(15, 1,15,15));
+				inputPanel.add(titleInput);
+				inputPanel.add(recorDateInput);
+				inputPanel.add(priceInput);
+				inputPanel.add(musicianRoyaltiesInput);
+				inputPanel.add(producerList);
+				inputPanel.add(producerRoyalriesInput);
+				inputPanel.add(buildAddSongsButton());
+				inputPanel.add(saveBtn);
+				
+				songsPanel = new JPanel();
+				songsPanel.setBackground(Color.WHITE);
+				songsPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+				
+				createAlbumFormPanel.add(labelPanel);
+				createAlbumFormPanel.add(inputPanel);
+				createAlbumFormPanel.add(songsPanel);
 				
 				cancelBtn.addActionListener(new ActionListener() {
 					
 					public void actionPerformed(ActionEvent e) {
-						BorderLayout layout = (BorderLayout) mainPanel.getLayout();
-						mainPanel.remove(layout.getLayoutComponent(BorderLayout.NORTH));
-						mainPanel.add(buildSearchAndCreatePanel(searchAndCreatePanelPreferredSize),BorderLayout.NORTH);
+						mainPanel.removeAll();
+						JPanel searchAndCreatePanel = buildSearchAndCreatePanel(searchAndCreatePanelPreferredSize);
+						JPanel albumListPanel = buildAlbumListPanel(albumListPanelPreferredSize, albumsPerPage, 0, null);
+						JPanel paginationBarPanel = buildPaginationBarPanel(paginationBarPanelPreferredSize);
+						mainPanel.add(searchAndCreatePanel, BorderLayout.NORTH);
+						mainPanel.add(albumListPanel, BorderLayout.CENTER);
+						mainPanel.add(paginationBarPanel, BorderLayout.SOUTH);
 						mainPanel.revalidate();
 						mainPanel.repaint();
 					}
@@ -241,39 +294,49 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 					
 					public void actionPerformed(ActionEvent e) {
 						String title = titleInput.getText().trim();
+						String recordDate = recorDateInput.getText().trim();
+						String price = priceInput.getText().trim();
+						String musicianRoyalties = musicianRoyaltiesInput.getText().trim();
+						String producerRoyalties = producerRoyalriesInput.getText().trim();
+						String producerName = (String)producerList.getSelectedItem();
 						
 						if(title == null || title.isEmpty()) {
 							JOptionPane.showMessageDialog(null, "Field 'Title' is required");
+						} else if(price == null || price.isEmpty()) {
+							JOptionPane.showMessageDialog(null, "Field 'Price' is required");
 						} else {
-							album.setTitle(title);
+							Album a = new Album();
 							try {
-								albumService.updateAlbum(album);
+								a.setTitle(title);
+								a.setMusicianRoyalties(Double.parseDouble(musicianRoyalties));
+								a.setProducerRoyalties(Double.parseDouble(producerRoyalties));
+								a.setPrice(Double.parseDouble(price));
+								a.setProducerFk(musicianService.getByName(producerName).getId());
+								DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy"); 
+								a.setRecordDate((Date)formatter.parse(recordDate));
+								a.setSongs(songsToAddToAlbum);
+								albumService.updateAlbum(a);
+								
+								mainPanel.removeAll();
+								JPanel searchAndCreatePanel = buildSearchAndCreatePanel(searchAndCreatePanelPreferredSize);
+								JPanel albumListPanel = buildAlbumListPanel(albumListPanelPreferredSize, albumsPerPage, 0, null);
+								JPanel paginationBarPanel = buildPaginationBarPanel(paginationBarPanelPreferredSize);
+								
+								mainPanel.add(searchAndCreatePanel, BorderLayout.NORTH);
+								mainPanel.add(albumListPanel, BorderLayout.CENTER);
+								mainPanel.add(paginationBarPanel, BorderLayout.SOUTH);
+								
+								mainPanel.revalidate();
+								mainPanel.repaint();
 							} catch(Exception ex) {
-								JOptionPane.showMessageDialog(null, "Failed to save changes to db.");
+								System.out.println(ex);
+								JOptionPane.showMessageDialog(null, "Make sure you have provided valid data.");
 							}
-							
-							mainPanel.removeAll();
-							JPanel searchAndCreatePanel = buildSearchAndCreatePanel(searchAndCreatePanelPreferredSize);
-							JPanel albumListPanel = buildAlbumListPanel(albumListPanelPreferredSize, albumsPerPage, 0, null);
-							JPanel paginationBarPanel = buildPaginationBarPanel(paginationBarPanelPreferredSize);
-							
-							mainPanel.add(searchAndCreatePanel, BorderLayout.NORTH);
-							mainPanel.add(albumListPanel, BorderLayout.CENTER);
-							mainPanel.add(paginationBarPanel, BorderLayout.SOUTH);
-							
-							mainPanel.revalidate();
-							mainPanel.repaint();
 						} 
 					}
 				});
 				
-				editAlbumFormPanel.add(titleLabel);
-				editAlbumFormPanel.add(titleInput);
-				editAlbumFormPanel.add(cancelBtn);
-				editAlbumFormPanel.add(saveBtn);
-				
-				mainPanel.add(editAlbumFormPanel, BorderLayout.NORTH);
-				
+				mainPanel.add(createAlbumFormPanel, BorderLayout.CENTER);
 				mainPanel.revalidate();
 				mainPanel.repaint();
 			}
@@ -350,7 +413,7 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 				
 				songsPanel = new JPanel();
 				songsPanel.setBackground(Color.WHITE);
-				songsPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
+				songsPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 				
 				createAlbumFormPanel.add(labelPanel);
 				createAlbumFormPanel.add(inputPanel);
@@ -395,6 +458,7 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 								a.setProducerFk(musicianService.getByName(producerName).getId());
 								DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy"); 
 								a.setRecordDate((Date)formatter.parse(recordDate));
+								a.setSongs(songsToAddToAlbum);
 								albumService.createAlbum(a);
 								
 								mainPanel.removeAll();
@@ -426,13 +490,12 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 	}
 	
 	private JButton buildAddSongsButton() {
-		JButton btn = new JButton("Add song");
+		JButton btn = new JButton("Songs");
 		
 		btn.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
-				List<Song> songs = songService.get(10000, 0, null);
-				
+				List<Song> songs = songService.get(50, 0, null);
 				DefaultTableModel model = new DefaultTableModel() {
 					@Override
 					public Class<?> getColumnClass(int column) {
@@ -451,13 +514,12 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 				       return false;
 				    }
 				};
-			      
 		        model.setColumnIdentifiers(new Object[] { "Song Title", "",});
 		        JTable table = new JTable(model);
 		        table.setCellSelectionEnabled(false);
 		        table.setRowSelectionAllowed(false);
-		        table.getColumnModel().getColumn(0).setPreferredWidth(5*songsPanel.getSize().width/6);
-		        table.getColumnModel().getColumn(1).setPreferredWidth(songsPanel.getSize().width/6);
+		        table.getColumnModel().getColumn(0).setPreferredWidth(6*(songsPanel.getSize().width-60)/8);
+		        table.getColumnModel().getColumn(1).setPreferredWidth(2*(songsPanel.getSize().width-60)/8);
 		        
 		        TableCellRenderer buttonRenderer = new JTableButtonRenderer();
 		        table.getColumnModel().getColumn(1).setCellRenderer(buttonRenderer);
@@ -466,7 +528,14 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 		        } else {
 		        	rowHeight = songsPanel.getSize().height/22;
 		        	for (int i = 0; i < songs.size(); ++i){
-		        		JButton addSongToAlbumBtn = buildAddSongToAlbumBtn(songs.get(i));
+		        		String btnText = "Add";
+		        		System.out.println("song "+songs.get(i).getId());
+		        		if(songsToAddToAlbum != null && songsToAddToAlbum.contains(songs.get(i)))
+		        		{
+		        			System.out.print("is in album");
+		        			btnText = "Remove";
+		        		}
+		        		JButton addSongToAlbumBtn = buildAddSongToAlbumBtn(songs.get(i),btnText);
 		                model.insertRow(i, new Object[]{ songs.get(i).getTitle() , addSongToAlbumBtn});
 		                table.setRowHeight(i, rowHeight);
 		            }
@@ -474,8 +543,18 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 		        table.addMouseListener(new JTableButtonMouseListener(table,rowHeight));
 		        table.getTableHeader().setSize(table.getSize().width, 20);
 		        table.getTableHeader().setBackground(Color.WHITE);
-		        songsPanel.add(table.getTableHeader());
-		        songsPanel.add(table);
+		        
+		        JPanel auxPanel = new JPanel();
+		        auxPanel.setLayout(new GridLayout());
+		        auxPanel.setPreferredSize(new Dimension(songsPanel.getSize().width-50, songsPanel.getSize().height-50));
+		        auxPanel.add(table);
+		        
+		        JScrollPane sp = new JScrollPane(auxPanel);
+		        sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		        
+		        songsPanel.add(sp);
+		        songsPanel.revalidate();
+		        songsPanel.repaint();
 		        mainPanel.setBackground(Color.WHITE);
 		        mainPanel.revalidate();
 		        mainPanel.repaint();
@@ -485,13 +564,22 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 		return btn;
 	}
 	
-	private JButton buildAddSongToAlbumBtn(final Song song) {
-		JButton btn = new JButton(SwingUtils.createImageIcon("/icons/add.png", "Add song to Album"));
+	private JButton buildAddSongToAlbumBtn(final Song song, String btnText) {
+		final JButton btn = new JButton(btnText);
 		
 		btn.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
-				songsToAddToAlbum.add(song);
+				if(btn.getText().equals("Remove")) {
+					songsToAddToAlbum.remove(song);
+					btn.setText("Add");
+				} else {
+					songsToAddToAlbum.add(song);
+					btn.removeAll();
+					btn.setText("Remove");
+				}
+				songsPanel.revalidate();
+				songsPanel.repaint();
 			}
 		});
 		

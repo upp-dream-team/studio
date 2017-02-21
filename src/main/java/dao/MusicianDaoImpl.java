@@ -23,6 +23,7 @@ public class MusicianDaoImpl  implements MusicianDao{
 		} else {
 			String SQL = "SELECT * FROM musician LIMIT ? OFFSET ?";
 			List <Musician> musicians = jdbcTemplate.query(SQL, new Object[]{ limit, offset},  new MusicianRowMapper());
+			System.out.println("MusicianDao: musician list size: "+musicians.size());
 			return musicians;
 		}
 	}

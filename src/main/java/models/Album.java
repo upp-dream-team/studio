@@ -87,4 +87,13 @@ public class Album {
 	public void setProducerRoyalties(double producerRoyalties) {
 		this.producerRoyalties = producerRoyalties;
 	}
+	
+	 @Override 
+	 public boolean equals(Object aThat) {
+		    if ( this == aThat ) return true;
+		    Album that = (Album)aThat;
+
+		    //now a proper field-by-field evaluation can be made
+		    return that.getId() == this.id;
+		  }
 }
