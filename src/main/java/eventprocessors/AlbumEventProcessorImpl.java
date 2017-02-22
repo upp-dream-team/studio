@@ -554,12 +554,17 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 		        table.getTableHeader().setSize(table.getSize().width, 20);
 		        table.getTableHeader().setBackground(Color.WHITE);
 		        
+		        /*
 		        JPanel auxPanel = new JPanel();
 		        auxPanel.setLayout(new GridLayout());
 		        auxPanel.setPreferredSize(new Dimension(songsPanel.getSize().width-50, songsPanel.getSize().height-50));
 		        auxPanel.add(table);
+		        */
 		        
-		        JScrollPane sp = new JScrollPane(auxPanel);
+		        songsPanel.setLayout(new GridLayout());
+		        
+		        JScrollPane sp = new JScrollPane(table);
+		        //sp.getViewport().setPreferredSize(auxPanel.getPreferredSize());
 		        sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		        
 		        songsPanel.add(sp);
