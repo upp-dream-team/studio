@@ -37,3 +37,4 @@ out
 test-output
 atlassian-ide-plugin.xml
 .gradletasknamecache
+src/main/java/dreamteamapp/AppConfig.java

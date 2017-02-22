@@ -26,4 +26,19 @@ public class SongDaoImpl implements SongDao {
 		}
 	}
 
+	public List<Song> get(String song) {
+		String SQL = "SELECT * FROM song WHERE LOWER(song.title) LIKE ?";
+		return jdbcTemplate.query(SQL, new SongRowMapper(), song);
+	}
+
+	public void add(Song song) {
+		String query = "INSERT INTO song (author, title, album) VALUES (?, ?, ?)";
+		jdbcTemplate.update(query, song.getAuthor(), song.getTitle(), song.getAlbumFk());
+	}
+
+	public int delete(int id) {
+		String query = "DELETE FROM song WHERE id = ?";
+		return jdbcTemplate.update(query, new Object[] {id});
+	}
+
 }

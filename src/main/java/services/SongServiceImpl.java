@@ -18,4 +18,17 @@ public class SongServiceImpl implements SongService{
 		return songDao.get(limit, offset, filterQuery);
 	}
 
+	public List<Song> get(String song) {
+		return songDao.get(song);
+	}
+
+	public void add(Song song) {
+		songDao.add(song);
+		
+	}
+
+	public int delete(int id) {
+		return songDao.delete(id);
+	}
+
 }
