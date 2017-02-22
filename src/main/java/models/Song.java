@@ -7,7 +7,7 @@ public class Song {
 	private int id;
 	private String title;
 	private String author;
-	private int albumFk;
+	private Integer albumFk;
 	private List<Musician> musicians;
 	
 	public int getId() {
@@ -34,10 +34,19 @@ public class Song {
 	public void setAuthor(String author) {
 		this.author = author;
 	}
-	public int getAlbumFk() {
+	public Integer getAlbumFk() {
 		return albumFk;
 	}
-	public void setAlbumFk(int albumFk) {
+	public void setAlbumFk(Integer albumFk) {
 		this.albumFk = albumFk;
 	}
+	
+	@Override 
+	 public boolean equals(Object aThat) {
+		    if ( this == aThat ) return true;
+		    Song that = (Song)aThat;
+
+		    //now a proper field-by-field evaluation can be made
+		    return that.getId() == this.id;
+		  }
 }

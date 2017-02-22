@@ -9,8 +9,8 @@ public class Album {
 	private String title;
 	private Date recordDate;
 	private double price;
-	private double royaltiesPercentage;
-	private double chiefRoyaltiesPercentage;
+	private double musicianRoyalties;
+	private double producerRoyalties;
 	private int producerFk;
 	
 	private Musician producer;
@@ -56,22 +56,6 @@ public class Album {
 		this.price = price;
 	}
 
-	public double getRoyaltiesPercentage() {
-		return royaltiesPercentage;
-	}
-
-	public void setRoyaltiesPercentage(double royaltiesPercentage) {
-		this.royaltiesPercentage = royaltiesPercentage;
-	}
-
-	public double getChiefRoyaltiesPercentage() {
-		return chiefRoyaltiesPercentage;
-	}
-
-	public void setChiefRoyaltiesPercentage(double chiefRoyaltiesPercentage) {
-		this.chiefRoyaltiesPercentage = chiefRoyaltiesPercentage;
-	}
-
 	public int getProducerFk() {
 		return producerFk;
 	}
@@ -87,4 +71,29 @@ public class Album {
 	public void setProducer(Musician producer) {
 		this.producer = producer;
 	}
+
+	public double getMusicianRoyalties() {
+		return musicianRoyalties;
+	}
+
+	public void setMusicianRoyalties(double musicianRoyalties) {
+		this.musicianRoyalties = musicianRoyalties;
+	}
+
+	public double getProducerRoyalties() {
+		return producerRoyalties;
+	}
+
+	public void setProducerRoyalties(double producerRoyalties) {
+		this.producerRoyalties = producerRoyalties;
+	}
+	
+	 @Override 
+	 public boolean equals(Object aThat) {
+	    if ( this == aThat ) return true;
+	    Album that = (Album)aThat;
+
+	    //now a proper field-by-field evaluation can be made
+	    return that.getId() == this.id;
+	 }
 }

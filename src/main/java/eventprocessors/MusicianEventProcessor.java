@@ -4,8 +4,7 @@ import java.awt.Dimension;
 
 import javax.swing.JPanel;
 
-public interface AlbumEventProcessor {
+public interface MusicianEventProcessor {
 
 	public JPanel process(Dimension sizeOfParentElement);
-	
 }
