@@ -253,7 +253,12 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 				musicianRoyaltiesInput.setText(""+album.getMusicianRoyalties());
 				final JTextField producerRoyalriesInput = new JTextField(40);
 				producerRoyalriesInput.setText(""+album.getProducerRoyalties());
-				final JComboBox producerList = new JComboBox(musicianService.getMuscianNames().toArray());				 
+				List<String> musicians = musicianService.getMuscianNames();
+				System.out.println("Producer: " + album.getProducer().getName());
+				int indexOfSelectedItem = musicians.indexOf(album.getProducer().getName());
+				System.out.println("Producer index: " + indexOfSelectedItem);
+				final JComboBox producerList = new JComboBox(musicians.toArray());
+				producerList.setSelectedIndex(indexOfSelectedItem);
 				JPanel inputPanel = new JPanel();
 				inputPanel.setBackground(Color.WHITE);
 				inputPanel.setBorder(new EmptyBorder(0, 50, 0, 30));
@@ -307,6 +312,7 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 						} else {
 							Album a = new Album();
 							try {
+								a.setId(album.getId());
 								a.setTitle(title);
 								a.setMusicianRoyalties(Double.parseDouble(musicianRoyalties));
 								a.setProducerRoyalties(Double.parseDouble(producerRoyalties));
@@ -387,8 +393,6 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 				labelPanel.add(new JLabel("Musician Royalties", SwingConstants.RIGHT));
 				labelPanel.add(new JLabel("Producer", SwingConstants.RIGHT));
 				labelPanel.add(new JLabel("Producer Royalties", SwingConstants.RIGHT));
-				labelPanel.add(new JLabel("Songs", SwingConstants.RIGHT));
-				labelPanel.add(cancelBtn);
 				
 				JButton saveBtn = new JButton("Save");
 				final JTextField titleInput = new JTextField(40);
@@ -410,6 +414,7 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 				inputPanel.add(producerRoyalriesInput);
 				inputPanel.add(buildAddSongsButton());
 				inputPanel.add(saveBtn);
+				inputPanel.add(cancelBtn);
 				
 				songsPanel = new JPanel();
 				songsPanel.setBackground(Color.WHITE);
@@ -490,11 +495,12 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 	}
 	
 	private JButton buildAddSongsButton() {
-		JButton btn = new JButton("Songs");
+		final JButton btn = new JButton("Manage Songs");
 		
 		btn.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
+				btn.setEnabled(false);
 				List<Song> songs = songService.get(50, 0, null);
 				DefaultTableModel model = new DefaultTableModel() {
 					@Override
@@ -529,9 +535,13 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 		        	rowHeight = songsPanel.getSize().height/22;
 		        	for (int i = 0; i < songs.size(); ++i){
 		        		String btnText = "Add";
-		        		System.out.println("song "+songs.get(i).getId());
-		        		if(songsToAddToAlbum != null && songsToAddToAlbum.contains(songs.get(i)))
-		        		{
+		        		
+		        		List<Integer> ids = new ArrayList<Integer>();
+		        		for(Song s : songsToAddToAlbum) {
+		        			ids.add(s.getId());
+		        		}
+		        		
+		        		if(ids.contains(songs.get(i).getId())) {
 		        			System.out.print("is in album");
 		        			btnText = "Remove";
 		        		}

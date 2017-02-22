@@ -13,7 +13,7 @@ public class MusicianDaoImpl  implements MusicianDao{
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
-
+	
 	public List<Musician> get(int limit, int offset, String filterQuery) {
 		if(filterQuery != null && !filterQuery.trim().isEmpty()) {
 			String SQL = "SELECT * FROM musician WHERE LOWER(musician.name) LIKE ? || LOWER(phone) LIKE ? LIMIT ? OFFSET ?";
@@ -23,7 +23,6 @@ public class MusicianDaoImpl  implements MusicianDao{
 		} else {
 			String SQL = "SELECT * FROM musician LIMIT ? OFFSET ?";
 			List <Musician> musicians = jdbcTemplate.query(SQL, new Object[]{ limit, offset},  new MusicianRowMapper());
-			System.out.println("MusicianDao: musician list size: "+musicians.size());
 			return musicians;
 		}
 	}

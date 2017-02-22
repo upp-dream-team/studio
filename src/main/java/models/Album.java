@@ -90,10 +90,10 @@ public class Album {
 	
 	 @Override 
 	 public boolean equals(Object aThat) {
-		    if ( this == aThat ) return true;
-		    Album that = (Album)aThat;
+	    if ( this == aThat ) return true;
+	    Album that = (Album)aThat;
 
-		    //now a proper field-by-field evaluation can be made
-		    return that.getId() == this.id;
-		  }
+	    //now a proper field-by-field evaluation can be made
+	    return that.getId() == this.id;
+	 }
 }

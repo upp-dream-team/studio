@@ -17,6 +17,9 @@ public class AlbumDaoImpl implements AlbumDao {
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
+	
+	@Autowired
+	private MusicianDao musicianDao;
 	  
 	public List<Album> get(int limit, int offset, String filterQuery) {
 		List <Album> albums = new ArrayList<Album>();
@@ -34,6 +37,7 @@ public class AlbumDaoImpl implements AlbumDao {
 			String songsQuery = "SELECT * FROM song WHERE album = ?";
 			List<Song> songs = jdbcTemplate.query(songsQuery, new Object[]{ albums.get(i).getId()}, new SongRowMapper());
 			System.out.println("there are "+songs.size()+" in album "+albums.get(i).getId());
+			albums.get(i).setProducer(musicianDao.getById(albums.get(i).getProducerFk()));
 			albums.get(i).setSongs(songs);
 		}
 		return albums;
@@ -78,26 +82,40 @@ public class AlbumDaoImpl implements AlbumDao {
 				currentSongIds.add(s.getId());
 			}
 		}
-		List<Integer> currentSongIds2 = currentSongIds;
-		currentSongIds.removeAll(oldSongIds);
-		List<Integer> toAdd = currentSongIds;
-		oldSongIds.removeAll(currentSongIds2);
-		List<Integer> toDelete = oldSongIds;
+		
+		List<Integer> toAdd = new ArrayList<Integer>();
+		List<Integer> toDelete = new ArrayList<Integer>();
+		
+		for(int sId : oldSongIds) {
+			if(!currentSongIds.contains(sId))
+			{
+				toDelete.add(sId);
+			}
+		}
+		
+		for(int sId : currentSongIds) {
+			if(!oldSongIds.contains(sId))
+			{
+				toAdd.add(sId);
+			}
+		}
 		
 		String updateSongQuery = "UPDATE song SET album = ? WHERE id = ?";
 		if(toAdd != null) {
 			for(int sId : toAdd) {
+				System.out.println("add song "+sId+" to album "+a.getId());
 				jdbcTemplate.update(updateSongQuery, new Object[] {a.getId(), sId});
 			}
 		}
 		
 		if(toDelete != null) {
 			for(int sId : toDelete) {
+				System.out.println("remove song "+sId+" from album "+a.getId());
 				jdbcTemplate.update(updateSongQuery, new Object[] {null, sId});
 			}
 		}
 		
-		return jdbcTemplate.update(query, new Object[] {a.getTitle(), a.getRecordDate(), a.getPrice(), a.getMusicianRoyalties(), a.getProducerRoyalties(), a.getProducer()});
+		return jdbcTemplate.update(query, new Object[] {a.getTitle(), a.getRecordDate(), a.getPrice(), a.getMusicianRoyalties(), a.getProducerRoyalties(), a.getProducerFk(), a.getId()});
 	}
 
 	public int delete(int id) {
