@@ -41,4 +41,20 @@ public class SongDaoImpl implements SongDao {
 		return jdbcTemplate.update(query, new Object[] {id});
 	}
 
+	public int update(Song s) {
+		String query = "UPDATE song SET title = ?, author = ? WHERE id = ?";
+		return jdbcTemplate.update(query, new Object[] { s.getTitle(), s.getAuthor(), s.getId() });
+	}
+
+	public int getNumOfSongs(String filterQuery) {
+		if (filterQuery != null && !filterQuery.trim().isEmpty()) {
+			String SQL = "SELECT COUNT(*) FROM song WHERE LOWER(title) LIKE ? || LOWER(song.author) LIKE ?";
+			String wildcard = "%" + filterQuery.toLowerCase() + "%";
+			return jdbcTemplate.queryForObject(SQL, new Object[] { wildcard, wildcard }, Integer.class);
+		} else {
+			String SQL = "SELECT COUNT(*) FROM song";
+			return jdbcTemplate.queryForObject(SQL, Integer.class);
+		}
+	}
+
 }

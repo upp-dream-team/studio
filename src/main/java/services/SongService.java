@@ -9,4 +9,6 @@ public interface SongService {
 	public List<Song> get(String song);
 	public void add(Song song);
 	public int delete(int id);
+	public void update(Song s);
+	public int getNumOfSongs(String currentFilterQuery);
 }

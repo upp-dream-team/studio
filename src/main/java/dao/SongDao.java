@@ -10,5 +10,7 @@ public interface SongDao {
 	public List<Song> get(String song);
 	public void add(Song song);
 	public int delete(int id);
+	public int update(Song s);
+	public int getNumOfSongs(String filterQuery);
 
 }

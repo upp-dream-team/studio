@@ -29,6 +29,9 @@ public class AppStarter {
 	private MusicianEventProcessor muscianEventProcessor;
 	
 	@Autowired
+	private SongEventProcessor songEventProcessor;
+	
+	@Autowired
 	private RecordEventProcessor recordEventProcessor;
 	
 	@Autowired
@@ -37,9 +40,9 @@ public class AppStarter {
 	public AppStarter() {
 
 		JFrame frame = new JFrame("Studio");
-		frame.setResizable(false);
-		frame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
-		//frame.setSize(new Dimension(1200, 700));
+		//frame.setResizable(false);
+		//frame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
+		frame.setSize(new Dimension(1200, 700));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		JPanel container = new JPanel();
@@ -84,6 +87,20 @@ public class AppStarter {
 				contentPanel.revalidate();
 				contentPanel.repaint();
 			}
+		});
+		
+		
+		songs.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				contentPanel.removeAll();
+				JPanel songsPanel = songEventProcessor.process(contentPanel.getSize());
+				songsPanel.setPreferredSize(contentPanel.getSize());
+				contentPanel.add(songsPanel);
+				contentPanel.revalidate();
+				contentPanel.repaint();
+			}
+			
 		});
 		
 		sales.addActionListener(new ActionListener(){

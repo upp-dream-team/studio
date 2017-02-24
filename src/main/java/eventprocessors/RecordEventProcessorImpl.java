@@ -25,6 +25,7 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -116,17 +117,18 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 
 		model.setColumnIdentifiers(new Object[] { "#", "Date", "Client", "Album", "Quantity", "Total", "", "" });
 		JTable table = new JTable(model);
+		TableColumnModel columnModel = table.getColumnModel();
 
 		TableCellRenderer buttonRenderer = new JTableButtonRenderer();
-		table.getColumnModel().getColumn(6).setCellRenderer(buttonRenderer);
-		table.getColumnModel().getColumn(7).setCellRenderer(buttonRenderer);
+		columnModel.getColumn(6).setCellRenderer(buttonRenderer);
+		columnModel.getColumn(7).setCellRenderer(buttonRenderer);
 
 		for (int i : new int[]{0,4,5,6,7}){
-			table.getColumnModel().getColumn(i).setPreferredWidth(preferredSize.width/13);
+			columnModel.getColumn(i).setPreferredWidth(preferredSize.width/13);
 		}
-		table.getColumnModel().getColumn(1).setPreferredWidth(2*preferredSize.width/13);
-		table.getColumnModel().getColumn(2).setPreferredWidth(3*preferredSize.width/13);
-		table.getColumnModel().getColumn(3).setPreferredWidth(3*preferredSize.width/13);
+		columnModel.getColumn(1).setPreferredWidth(2*preferredSize.width/13);
+		columnModel.getColumn(2).setPreferredWidth(3*preferredSize.width/13);
+		columnModel.getColumn(3).setPreferredWidth(3*preferredSize.width/13);
 		
 		table.setRowHeight(rowHeight);
 
@@ -275,11 +277,11 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 					mainPanel.removeAll();
 					currentPage = 1;
 					JPanel searchAndCreatePanel = buildSearchAndCreatePanel(searchAndCreatePanelPreferredSize);
-					JPanel albumListPanel = buildRecordList(listPanelPreferredSize, recordsPerPage, 0, null);
+					JPanel recordListPanel = buildRecordList(listPanelPreferredSize, recordsPerPage, 0, null);
 					JPanel paginationBarPanel = buildPaginationPanel(paginationPanelPreferredSize);
 					
 					mainPanel.add(searchAndCreatePanel, BorderLayout.NORTH);
-					mainPanel.add(albumListPanel, BorderLayout.CENTER);
+					mainPanel.add(recordListPanel, BorderLayout.CENTER);
 					mainPanel.add(paginationBarPanel, BorderLayout.SOUTH);
 					
 					mainPanel.revalidate();
@@ -400,7 +402,7 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 						}else if(albumTitle == null || albumTitle.isEmpty()){
 							JOptionPane.showMessageDialog(null, "Field 'Album' is required");
 						}else{
-							System.out.println("Record r = new Record();");
+							//System.out.println("Record r = new Record();");
 							Record r = new Record();
 							r.setClient(name);
 							DateFormat formatter = new SimpleDateFormat("mm/dd/yyyy"); 
@@ -415,9 +417,9 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 								JOptionPane.showMessageDialog(null, "Quantity must be integer");
 							}
 							r.setAlbum(albumService.get(1, 0, albumTitle).get(0));
-							System.out.println("r.setAlbum(albumService.get(1, 0, albumTitle).get(0));");
+							//System.out.println("r.setAlbum(albumService.get(1, 0, albumTitle).get(0));");
 							try {
-								System.out.println("recordService.createRecord(r);");
+								//System.out.println("recordService.createRecord(r);");
 								recordService.createRecord(r);
 							} catch(Exception ex) {
 								JOptionPane.showMessageDialog(null, "Failed to save the record to the DB");
@@ -425,11 +427,11 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 		
 							mainPanel.removeAll();
 							JPanel searchAndCreatePanel = buildSearchAndCreatePanel(searchAndCreatePanelPreferredSize);
-							JPanel musicianListPanel = buildRecordList(listPanelPreferredSize, recordsPerPage, 0, null);
+							JPanel recordListPanel = buildRecordList(listPanelPreferredSize, recordsPerPage, 0, null);
 							JPanel paginationBarPanel = buildPaginationPanel(paginationPanelPreferredSize);
 							
 							mainPanel.add(searchAndCreatePanel, BorderLayout.NORTH);
-							mainPanel.add(musicianListPanel, BorderLayout.CENTER);
+							mainPanel.add(recordListPanel, BorderLayout.CENTER);
 							mainPanel.add(paginationBarPanel, BorderLayout.SOUTH);
 							
 							mainPanel.revalidate();

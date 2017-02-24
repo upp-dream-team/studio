@@ -8,6 +8,7 @@ public class Song {
 	private String title;
 	private String author;
 	private Integer albumFk;
+	private Album album;
 	private List<Musician> musicians;
 	
 	public int getId() {
@@ -49,4 +50,10 @@ public class Song {
 		    //now a proper field-by-field evaluation can be made
 		    return that.getId() == this.id;
 		  }
+	public Album getAlbum() {
+		return album;
+	}
+	public void setAlbum(Album album) {
+		this.album = album;
+	}
 }

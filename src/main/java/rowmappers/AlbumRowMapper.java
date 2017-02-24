@@ -9,7 +9,7 @@ import models.Album;
 public class AlbumRowMapper implements RowMapper<Album> {
 	
 	public Album mapRow(ResultSet rs, int rowNum) throws SQLException {
-		System.out.println("In album row mapper");
+		//System.out.println("In album row mapper");
 		Album album = new Album();
 		album.setId(rs.getInt("id"));
 		album.setTitle(rs.getString("title"));
