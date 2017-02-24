@@ -8,7 +8,7 @@ public class Record {
 	private String client;
 	private Date date;
 	private int quantity;
-	private int albumId; //костыль
+	private int albumId;
 	private Album album;
 	private int sellingId;
 

@@ -45,7 +45,6 @@ public class RecordDaoImpl implements RecordDao {
 		String query = "INSERT INTO sellings (client, sell_date, album_id) VALUES (?, ?, ?)";
 		jdbcTemplate.update(query,
 				new Object[] { record.getClient(), record.getDate(), record.getAlbum().getId() });
-		// dangerous!
 		int sellings_id = getLastSellingsId();
 		if (sellings_id == -1) {
 			return -1;

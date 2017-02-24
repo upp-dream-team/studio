@@ -15,7 +15,7 @@ public class RecordRowMapper implements RowMapper<Record>{
 		r.setClient(rs.getString("client"));
 		r.setDate(rs.getDate("sell_date"));
 		r.setQuantity(rs.getInt("quantity"));
-		r.setAlbumId(rs.getInt("album_id")); //костыль
+		r.setAlbumId(rs.getInt("album_id"));
 		r.setSellingId(rs.getInt("selling_id"));
 		return r;
 	}
