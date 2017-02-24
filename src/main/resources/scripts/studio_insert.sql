@@ -68,137 +68,137 @@ INSERT INTO `album` (`id`,`title`,`record_date`,`price`,`gonorar_percent`,`chief
   album 1: With the Beatles
 */
 
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (1,'Lennon–McCartney','It Wont Be Long',1);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (2,'Lennon–McCartney','All Ive Got to Do',1);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (3,'Lennon–McCartney','All My Loving',1);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (1,'Lennon-McCartney','It Wont Be Long',1);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (2,'Lennon-McCartney','All Ive Got to Do',1);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (3,'Lennon-McCartney','All My Loving',1);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (4,'George Harrison','Dont Bother Me',1);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (5,'Lennon–McCartney','Little Child',1);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (5,'Lennon-McCartney','Little Child',1);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (6,'Meredith Willson','Till There Was You',1);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (7,'Georgia Dobbins','Please Mister Postman',1);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (8,'Chuck Berry','Roll Over Beethoven',1);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (9,'Lennon–McCartney','Hold Me Tight',1);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (9,'Lennon-McCartney','Hold Me Tight',1);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (10,'Smokey Robinson','You Really Got a Hold on Me',1);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (11,'Lennon–McCartney','I Wanna Be Your Man',1);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (11,'Lennon-McCartney','I Wanna Be Your Man',1);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (12,'Richard Drapkin','Devil in Her Heart',1);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (13,'Lennon–McCartney','Not a Second Time',1);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (13,'Lennon-McCartney','Not a Second Time',1);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (14,'Janie Bradford','Money (Thats What I Want)',1);
 
 /*
   album 2: Help!
 */
 
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (15,'Lennon–McCartney','Help!',2);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (16,'Lennon–McCartney','The Night Before',2);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (17,'Lennon–McCartney','You Have Got to Hide Your Love Away',2);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (15,'Lennon-McCartney','Help!',2);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (16,'Lennon-McCartney','The Night Before',2);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (17,'Lennon-McCartney','You Have Got to Hide Your Love Away',2);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (18,'George Harrison','I Need You',2);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (19,'Lennon–McCartney','Another Girl',2);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (20,'Lennon–McCartney','You Are Going to Lose That Girl',2);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (21,'Lennon–McCartney','Ticket to Ride',2);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (19,'Lennon-McCartney','Another Girl',2);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (20,'Lennon-McCartney','You Are Going to Lose That Girl',2);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (21,'Lennon-McCartney','Ticket to Ride',2);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (22,'Johnny Russell','Act Naturally',2);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (23,'Lennon–McCartney','It Is Only Love',2);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (23,'Lennon-McCartney','It Is Only Love',2);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (24,'George Harrison','You Like Me Too Much',2);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (25,'Lennon–McCartney','Tell Me What You See',2);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (26,'Lennon–McCartney','I Have Just Seen a Face',2);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (27,'Lennon–McCartney','Yesterday',2);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (28,'Lennon–McCartney','Dizzy Miss Lizzy',2);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (25,'Lennon-McCartney','Tell Me What You See',2);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (26,'Lennon-McCartney','I Have Just Seen a Face',2);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (27,'Lennon-McCartney','Yesterday',2);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (28,'Lennon-McCartney','Dizzy Miss Lizzy',2);
 
 /*
   album 3: Rubber Soul
 */
 
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (29,'Lennon–McCartney','Drive My Car',3);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (30,'Lennon–McCartney','Norwegian Wood',3);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (31,'Lennon–McCartney','You Wont See Me',3);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (32,'Lennon–McCartney','Nowhere Man',3);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (29,'Lennon-McCartney','Drive My Car',3);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (30,'Lennon-McCartney','Norwegian Wood',3);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (31,'Lennon-McCartney','You Wont See Me',3);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (32,'Lennon-McCartney','Nowhere Man',3);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (33,'George Harrison','Think for Yourself',3);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (34,'Lennon–McCartney','The Word',3);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (35,'Lennon–McCartney','Michelle',3);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (36,'Lennon–McCartney','What Goes On',3);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (37,'Lennon–McCartney','Girl',3);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (38,'Lennon–McCartney','Im Looking Through You',3);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (39,'Lennon–McCartney','In My Life',3);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (40,'Lennon–McCartney','Wait',3);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (34,'Lennon-McCartney','The Word',3);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (35,'Lennon-McCartney','Michelle',3);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (36,'Lennon-McCartney','What Goes On',3);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (37,'Lennon-McCartney','Girl',3);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (38,'Lennon-McCartney','Im Looking Through You',3);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (39,'Lennon-McCartney','In My Life',3);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (40,'Lennon-McCartney','Wait',3);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (41,'George Harrison','If I Needed Someone',3);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (42,'Lennon–McCartney','Run for Your Life',3);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (42,'Lennon-McCartney','Run for Your Life',3);
 
 /*
   album 4: The White Album
 */
 
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (43,'Lennon–McCartney','Back in the U.S.S.R.',4);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (44,'Lennon–McCartney','Dear Prudence',4);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (45,'Lennon–McCartney','Glass Onion',4);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (46,'Lennon–McCartney','Ob-La-Di, Ob-La-Da',4);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (47,'Lennon–McCartney','Wild Honey Pie',4);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (48,'Lennon–McCartney','The Continuing Story of Bungalow Bill',4);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (43,'Lennon-McCartney','Back in the U.S.S.R.',4);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (44,'Lennon-McCartney','Dear Prudence',4);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (45,'Lennon-McCartney','Glass Onion',4);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (46,'Lennon-McCartney','Ob-La-Di, Ob-La-Da',4);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (47,'Lennon-McCartney','Wild Honey Pie',4);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (48,'Lennon-McCartney','The Continuing Story of Bungalow Bill',4);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (49,'George Harrison','While My Guitar Gently Weeps',4);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (50,'Lennon–McCartney','Happiness Is a Warm Gun',4);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (51,'Lennon–McCartney','Martha My Dear',4);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (52,'Lennon–McCartney','Im So Tired',4);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (53,'Lennon–McCartney','Blackbird',4);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (50,'Lennon-McCartney','Happiness Is a Warm Gun',4);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (51,'Lennon-McCartney','Martha My Dear',4);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (52,'Lennon-McCartney','Im So Tired',4);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (53,'Lennon-McCartney','Blackbird',4);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (54,'George Harrison','Piggies',4);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (55,'Lennon–McCartney','Rocky Raccoon',4);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (55,'Lennon-McCartney','Rocky Raccoon',4);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (56,'Richard Starkey','Dont Pass Me By',4);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (57,'Lennon–McCartney','Why Dont We Do It in the Road?',4);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (58,'Lennon–McCartney','I Will',4);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (59,'Lennon–McCartney','Julia',4);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (57,'Lennon-McCartney','Why Dont We Do It in the Road?',4);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (58,'Lennon-McCartney','I Will',4);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (59,'Lennon-McCartney','Julia',4);
 
 /*
   album 5: Yellow Submarine
 */
 
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (60,'Lennon–McCartney','Yellow Submarine',5);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (60,'Lennon-McCartney','Yellow Submarine',5);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (61,'George Harrison','Only a Northern Song',5);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (62,'Lennon–McCartney','All Together Now',5);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (63,'Lennon–McCartney','Hey Bulldog',5);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (62,'Lennon-McCartney','All Together Now',5);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (63,'Lennon-McCartney','Hey Bulldog',5);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (64,'George Harrison','Its All Too Much',5);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (65,'Lennon–McCartney','All You Need Is Love',5);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (65,'Lennon-McCartney','All You Need Is Love',5);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (66,'George Martin','Pepperland',5);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (67,'George Martin','Sea of Time',5);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (68,'George Martin','Sea of Holes',5);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (69,'George Martin','Sea of Monsters',5);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (70,'George Martin','March of the Meanies',5);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (71,'George Martin','Pepperland Laid Waste',5);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (72,'Lennon–McCartney','Yellow Submarine in Pepperland',5);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (72,'Lennon-McCartney','Yellow Submarine in Pepperland',5);
 
 /*
   album 6: Abbey Road
 */
 
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (73,'Lennon–McCartney','Come Together',6);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (73,'Lennon-McCartney','Come Together',6);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (74,'George Harrison','Something',6);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (75,'Lennon–McCartney','Maxwells Silver Hammer',6);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (76,'Lennon–McCartney','Oh! Darling',6);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (75,'Lennon-McCartney','Maxwells Silver Hammer',6);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (76,'Lennon-McCartney','Oh! Darling',6);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (77,'Richard Starkey','Octopus Garden',6);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (78,'Lennon–McCartney','I Want You',6);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (78,'Lennon-McCartney','I Want You',6);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (79,'George Harrison','Here Comes the Sun',6);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (80,'Lennon–McCartney','Because',6);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (81,'Lennon–McCartney','You Never Give Me Your Money',6);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (82,'Lennon–McCartney','Sun King',6);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (83,'Lennon–McCartney','Mean Mr. Mustard',6);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (84,'Lennon–McCartney','Polythene Pam',6);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (85,'Lennon–McCartney','She Came in Through the Bathroom Window',6);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (86,'Lennon–McCartney','Golden Slumbers',6);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (87,'Lennon–McCartney','Carry That Weight',6);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (88,'Lennon–McCartney','The End',6);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (89,'Lennon–McCartney','Her Majesty',6);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (80,'Lennon-McCartney','Because',6);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (81,'Lennon-McCartney','You Never Give Me Your Money',6);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (82,'Lennon-McCartney','Sun King',6);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (83,'Lennon-McCartney','Mean Mr. Mustard',6);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (84,'Lennon-McCartney','Polythene Pam',6);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (85,'Lennon-McCartney','She Came in Through the Bathroom Window',6);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (86,'Lennon-McCartney','Golden Slumbers',6);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (87,'Lennon-McCartney','Carry That Weight',6);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (88,'Lennon-McCartney','The End',6);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (89,'Lennon-McCartney','Her Majesty',6);
 
 /*
   album 7: Let It Be
 */
 
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (90,'Lennon–McCartney','Two of Us',7);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (91,'Lennon–McCartney','Dig a Pony',7);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (92,'Lennon–McCartney','Across the Universe',7);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (90,'Lennon-McCartney','Two of Us',7);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (91,'Lennon-McCartney','Dig a Pony',7);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (92,'Lennon-McCartney','Across the Universe',7);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (93,'George Harrison','I Me Mine',7);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (94,'Lennon–McCartney','Dig It',7);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (95,'Lennon–McCartney','Let It Be',7);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (96,'Lennon–McCartney','Maggie Mae',7);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (97,'Lennon–McCartney','Ive Got a Feeling',7);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (98,'Lennon–McCartney','One After 909',7);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (99,'Lennon–McCartney','The Long and Winding Road',7);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (94,'Lennon-McCartney','Dig It',7);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (95,'Lennon-McCartney','Let It Be',7);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (96,'Lennon-McCartney','Maggie Mae',7);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (97,'Lennon-McCartney','Ive Got a Feeling',7);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (98,'Lennon-McCartney','One After 909',7);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (99,'Lennon-McCartney','The Long and Winding Road',7);
 INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (100,'George Harrison','For You Blue',7);
-INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (101,'Lennon–McCartney','Get Back',7);
+INSERT INTO `song` (`id`,`author`,`title`,`album`) VALUES (101,'Lennon-McCartney','Get Back',7);
 
 /*
   album 8: Portrait of an American Family
