@@ -208,8 +208,9 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 				JLabel nameL = new JLabel("Client Name");
 				JLabel quantityL = new JLabel("Quantity");
 
-				final JTextField dateInput = new JTextField(40);
-				dateInput.setText(r.getDate().toString());
+				UtilDateModel model = new UtilDateModel(r.getDate());
+				model.setSelected(true);
+				final JDatePickerImpl datePicker = new JDatePickerImpl(new JDatePanelImpl(model));
 				final JTextField nameInput = new JTextField(40);
 				nameInput.setText(r.getClient());
 				final JTextField quantityInput = new JTextField(40);
@@ -233,10 +234,10 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 					
 					public void actionPerformed(ActionEvent e) {
 						String name = nameInput.getText().trim();
-						String date = dateInput.getText().trim();
+						Date date = (Date) datePicker.getModel().getValue();
 						String quantity = quantityInput.getText().trim();
 						
-						if(date == null || date.isEmpty()) {
+						if(date == null) {
 							JOptionPane.showMessageDialog(null, "Field 'Date' is required");
 						} else if(name == null || name.isEmpty()) {
 							JOptionPane.showMessageDialog(null, "Field 'Client Name' is required");
@@ -244,12 +245,7 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 							JOptionPane.showMessageDialog(null, "Field 'Quantity' is required");
 						}else{
 							r.setClient(name);
-							DateFormat formatter = new SimpleDateFormat("yyyy-mm-dd"); 
-							try {
-								r.setDate((Date)formatter.parse(date));
-							} catch (ParseException e2) {
-								JOptionPane.showMessageDialog(null, "Incorrect date format");
-							}
+							r.setDate(date);
 							try{
 								r.setQuantity(Integer.parseInt(quantity));
 							}catch(NumberFormatException e1){
@@ -279,7 +275,7 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 				});
 				
 				editFormPanel.add(dateL);
-				editFormPanel.add(dateInput);
+				editFormPanel.add(datePicker);
 				editFormPanel.add(nameL);
 				editFormPanel.add(nameInput);
 				editFormPanel.add(quantityL);
@@ -400,8 +396,10 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 				JLabel albumL = new JLabel("Album");
 				JLabel quantityL = new JLabel("Quantity");
 
-				final JTextField dateInput = new JTextField(40);
-				dateInput.setText("mm/dd/yyyy");
+				UtilDateModel model = new UtilDateModel();
+				model.setSelected(true);
+				final JDatePickerImpl datePicker = new JDatePickerImpl(new JDatePanelImpl(model));
+				
 				final JTextField nameInput = new JTextField(40);
 				final JComboBox<String> albumList = new JComboBox(albumService.getAlbumTitles().toArray());
 				final JTextField quantityInput = new JTextField(40);
@@ -424,11 +422,11 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 					
 					public void actionPerformed(ActionEvent e) {
 						String name = nameInput.getText().trim();
-						String date = dateInput.getText().trim();
+						Date date = (Date) datePicker.getModel().getValue();
 						String quantity = quantityInput.getText().trim();
 						String albumTitle = (String)albumList.getSelectedItem();
 						
-						if(date == null || date.isEmpty()) {
+						if(date == null) {
 							JOptionPane.showMessageDialog(null, "Field 'Date' is required");
 						} else if(name == null || name.isEmpty()) {
 							JOptionPane.showMessageDialog(null, "Field 'Client Name' is required");
@@ -440,12 +438,8 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 							//System.out.println("Record r = new Record();");
 							Record r = new Record();
 							r.setClient(name);
-							DateFormat formatter = new SimpleDateFormat("mm/dd/yyyy"); 
-							try {
-								r.setDate((Date)formatter.parse(date));
-							} catch (ParseException e2) {
-								JOptionPane.showMessageDialog(null, "Incorrect date format");
-							}
+							r.setDate(date);
+							System.out.println(r.getDate());
 							try{
 								r.setQuantity(Integer.parseInt(quantity));
 							}catch(NumberFormatException e1){
@@ -476,7 +470,7 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 				});
 				
 				form.add(dateL);
-				form.add(dateInput);
+				form.add(datePicker);
 				form.add(nameL);
 				form.add(nameInput);
 				form.add(albumL);
@@ -539,9 +533,9 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 			public void actionPerformed(ActionEvent e) {
 				dateFrom = (Date) datePickerFrom.getModel().getValue();
 				
-				DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-				String dateFormat = formatter.format(dateFrom);
-				System.out.println(dateFormat);
+				// DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+				// String dateFormat = formatter.format(dateFrom);
+				// System.out.println(dateFormat);
 				
 				currentPage = 1;
 				BorderLayout layout = (BorderLayout) mainPanel.getLayout();
@@ -565,9 +559,9 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 			public void actionPerformed(ActionEvent e) {
 				dateTo = (Date) datePickerTo.getModel().getValue();
 				
-				DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-				String dateFormat = formatter.format(dateTo);
-				System.out.println(dateFormat);
+				// DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+				// String dateFormat = formatter.format(dateTo);
+				// System.out.println(dateFormat);
 				
 				currentPage = 1;
 				BorderLayout layout = (BorderLayout) mainPanel.getLayout();

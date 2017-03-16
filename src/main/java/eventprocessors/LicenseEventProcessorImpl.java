@@ -201,15 +201,16 @@ public class LicenseEventProcessorImpl implements LicenseEventProcessor {
 				JPanel editFormPanel = new JPanel();
 				editFormPanel.setBorder(new EmptyBorder(10, 10, 30, 10));
 				editFormPanel.setSize(searchAndCreatePanelPreferredSize);
-				editFormPanel.setLayout(new GridLayout(4, 2));
+				editFormPanel.setLayout(new GridLayout(5, 2));
 				
 				JLabel dateL = new JLabel("Date");
 				JLabel nameL = new JLabel("Client Name");
 				JLabel periodL = new JLabel("Period");
 				JLabel priceL = new JLabel("Price");
 
-				final JTextField dateInput = new JTextField(40);
-				dateInput.setText(r.getDate().toString());
+				UtilDateModel model = new UtilDateModel(r.getDate());
+				model.setSelected(true);
+				final JDatePickerImpl datePicker = new JDatePickerImpl(new JDatePanelImpl(model));
 				final JTextField nameInput = new JTextField(40);
 				nameInput.setText(r.getClient());
 				final JTextField periodInput = new JTextField(40);
@@ -235,11 +236,11 @@ public class LicenseEventProcessorImpl implements LicenseEventProcessor {
 					
 					public void actionPerformed(ActionEvent e) {
 						String name = nameInput.getText().trim();
-						String date = dateInput.getText().trim();
+						Date date = (Date) datePicker.getModel().getValue();
 						String period = periodInput.getText().trim();
 						String price = priceInput.getText().trim();
 						
-						if(date == null || date.isEmpty()) {
+						if(date == null) {
 							JOptionPane.showMessageDialog(null, "Field 'Date' is required");
 						} else if(name == null || name.isEmpty()) {
 							JOptionPane.showMessageDialog(null, "Field 'Client Name' is required");
@@ -249,12 +250,7 @@ public class LicenseEventProcessorImpl implements LicenseEventProcessor {
 							JOptionPane.showMessageDialog(null, "Field 'Price' is required");
 						}else{
 							r.setClient(name);
-							DateFormat formatter = new SimpleDateFormat("yyyy-mm-dd"); 
-							try {
-								r.setDate((Date)formatter.parse(date));
-							} catch (ParseException e2) {
-								JOptionPane.showMessageDialog(null, "Incorrect date format");
-							}
+							r.setDate(date);
 							try{
 								r.setPeriod(Integer.parseInt(period));
 							}catch(NumberFormatException e1){
@@ -289,7 +285,7 @@ public class LicenseEventProcessorImpl implements LicenseEventProcessor {
 				});
 				
 				editFormPanel.add(dateL);
-				editFormPanel.add(dateInput);
+				editFormPanel.add(datePicker);
 				editFormPanel.add(nameL);
 				editFormPanel.add(nameInput);
 				editFormPanel.add(periodL);
@@ -405,7 +401,7 @@ public class LicenseEventProcessorImpl implements LicenseEventProcessor {
 				JPanel form = new JPanel();
 				form.setBorder(new EmptyBorder(10, 10, 30, 10));
 				form.setSize(searchAndCreatePanelPreferredSize);
-				form.setLayout(new GridLayout(3,2));
+				form.setLayout(new GridLayout(6, 2));
 				
 				JLabel dateL = new JLabel("Date");
 				JLabel nameL = new JLabel("Client Name");
@@ -413,8 +409,9 @@ public class LicenseEventProcessorImpl implements LicenseEventProcessor {
 				JLabel periodL = new JLabel("Period");
 				JLabel priceL = new JLabel("Price");
 
-				final JTextField dateInput = new JTextField(40);
-				dateInput.setText("mm/dd/yyyy");
+				UtilDateModel model = new UtilDateModel();
+				model.setSelected(true);
+				final JDatePickerImpl datePicker = new JDatePickerImpl(new JDatePanelImpl(model));
 				final JTextField nameInput = new JTextField(40);
 				final JComboBox albumList = new JComboBox(albumService.getAlbumTitles().toArray());
 				final JTextField periodInput = new JTextField(40);
@@ -438,12 +435,12 @@ public class LicenseEventProcessorImpl implements LicenseEventProcessor {
 					
 					public void actionPerformed(ActionEvent e) {
 						String name = nameInput.getText().trim();
-						String date = dateInput.getText().trim();
+						Date date = (Date) datePicker.getModel().getValue();
 						String period = periodInput.getText().trim();
 						String price = priceInput.getText().trim();
 						String albumTitle = (String)albumList.getSelectedItem();
 						
-						if(date == null || date.isEmpty()) {
+						if(date == null) {
 							JOptionPane.showMessageDialog(null, "Field 'Date' is required");
 						} else if(name == null || name.isEmpty()) {
 							JOptionPane.showMessageDialog(null, "Field 'Client Name' is required");
@@ -457,12 +454,7 @@ public class LicenseEventProcessorImpl implements LicenseEventProcessor {
 							System.out.println("License l = new License();");
 							License r = new License();
 							r.setClient(name);
-							DateFormat formatter = new SimpleDateFormat("mm/dd/yyyy"); 
-							try {
-								r.setDate((Date)formatter.parse(date));
-							} catch (ParseException e2) {
-								JOptionPane.showMessageDialog(null, "Incorrect date format");
-							}
+							r.setDate(date);
 							try{
 								r.setPeriod(Integer.parseInt(period));
 							}catch(NumberFormatException e1){
@@ -498,7 +490,7 @@ public class LicenseEventProcessorImpl implements LicenseEventProcessor {
 				});
 				
 				form.add(dateL);
-				form.add(dateInput);
+				form.add(datePicker);
 				form.add(nameL);
 				form.add(nameInput);
 				form.add(albumL);
