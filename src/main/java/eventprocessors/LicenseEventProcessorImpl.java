@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,6 +34,7 @@ import eventprocessorhelpers.JTableButtonMouseListener;
 import eventprocessorhelpers.JTableButtonRenderer;
 import eventprocessorhelpers.SwingUtils;
 import models.Musician;
+import models.Record;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
@@ -94,9 +96,34 @@ public class LicenseEventProcessorImpl implements LicenseEventProcessor {
 		List<License> licenses = licenseService.getLicenses(query, start, start+limit, dateFrom, dateTo);
 		JTable licenseTable = buildLicenseTable(licenses, preferredSize);
 		
+		Double sum = 0.0;
+		for (License l : licenses){
+			sum += l.getPrice() * l.getPeriod();
+		}
+		JPanel totalPanel = buildTotalPanel(query, sum);
+		
 		res.add(licenseTable.getTableHeader(), BorderLayout.NORTH);
 		res.add(licenseTable, BorderLayout.CENTER);
+		res.add(totalPanel, BorderLayout.SOUTH);
 		
+		return res;
+	}
+
+	private JPanel buildTotalPanel(String query, Double totalForPage) {
+		JPanel res = new JPanel(new BorderLayout());
+		res.setBackground(Color.WHITE);
+		JPanel totalPanelCont = new JPanel(new GridLayout(2, 2));
+		totalPanelCont.setBackground(Color.WHITE);
+		
+		Font f1 = new Font(Font.SANS_SERIF, Font.PLAIN, 14);
+		Font f2 = new Font(Font.SANS_SERIF, Font.BOLD, 16);
+		
+		totalPanelCont.add(SwingUtils.createJLabelWithSpecifiedFont("Total for this page: ", f1));
+		totalPanelCont.add(SwingUtils.createJLabelWithSpecifiedFont(totalForPage.toString(), f2));
+		totalPanelCont.add(SwingUtils.createJLabelWithSpecifiedFont("Total for all pages: ", f1));
+		totalPanelCont.add(SwingUtils.createJLabelWithSpecifiedFont(licenseService.getTotal(query, dateFrom, dateTo).toString(), f2));
+		
+		res.add(totalPanelCont, BorderLayout.EAST);
 		return res;
 	}
 

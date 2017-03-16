@@ -14,5 +14,6 @@ public interface LicenseService {
 	public void deleteLicense(int id);
 	public Date getDateOfTheOldestLicense();
 	public Date getDateOfTheNewestLicense();
+	public Double getTotal(String query, Date dateFrom, Date dateTo);
 
 }

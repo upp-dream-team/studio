@@ -51,4 +51,12 @@ public class LicenseServiseImpl implements LicenseService{
 		return licenseDao.getNewestDate();
 	}
 
+	public Double getTotal(String query, Date dateFrom, Date dateTo) {
+		Double total = licenseDao.getTotal(query, dateFrom, dateTo);
+		if (total == null) {
+			total = 0.0;
+		}
+		return total;
+	}
+
 }

@@ -15,5 +15,6 @@ public interface LicenseDao {
 	public int getNumOfLicenses(String filterQuery, Date dateFrom, Date dateTo);
 	public Date getOldestDate();
 	public Date getNewestDate();
+	public Double getTotal(String query, Date dateFrom, Date dateTo);
 
 }

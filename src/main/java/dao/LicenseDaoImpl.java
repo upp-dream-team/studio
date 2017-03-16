@@ -98,4 +98,16 @@ public class LicenseDaoImpl implements LicenseDao {
 		return jdbcTemplate.queryForObject(SQL, Date.class);
 	}
 
+	public Double getTotal(String filterQuery, Date dateFrom, Date dateTo) {
+		System.out.println("in LicenseDaoImpl.getTotal()");
+		if (filterQuery != null && !filterQuery.trim().isEmpty()) {
+			String SQL = "SELECT SUM(period*price) FROM license INNER JOIN sellings ON license.selling_id=sellings.id WHERE LOWER(client) LIKE ? AND sell_date BETWEEN ? AND ?";
+			String wildcard = "%" + filterQuery.toLowerCase() + "%";
+			return jdbcTemplate.queryForObject(SQL, new Object[] { wildcard, dateFrom, dateTo }, Double.class);
+		} else {
+			String SQL = "SELECT SUM(period*price) FROM license INNER JOIN sellings ON license.selling_id=sellings.id WHERE sell_date BETWEEN ? AND ?";
+			return jdbcTemplate.queryForObject(SQL, new Object[] { dateFrom, dateTo }, Double.class);
+		}
+	}
+
 }
