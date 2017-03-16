@@ -1,5 +1,6 @@
 package dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,17 +20,17 @@ public class RecordDaoImpl implements RecordDao {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	public List<Record> get(int limit, int offset, String filterQuery) {
+	public List<Record> get(int limit, int offset, String filterQuery, Date dateFrom, Date dateTo) {
 		System.out.println("in RecordDaoImpl.get()");
 		if (filterQuery != null && !filterQuery.trim().isEmpty()) {
-			String SQL = "SELECT * FROM record INNER JOIN sellings ON record.selling_id=sellings.id WHERE client LIKE ? LIMIT ? OFFSET ?";
-			String wildcard = "%" + filterQuery + "%";
-			List<Record> records = jdbcTemplate.query(SQL, new Object[] { wildcard, limit, offset },
+			String SQL = "SELECT * FROM record INNER JOIN sellings ON record.selling_id=sellings.id WHERE LOWER(client) LIKE ? AND sell_date BETWEEN ? AND ? LIMIT ? OFFSET ?";
+			String wildcard = "%" + filterQuery.toLowerCase() + "%";
+			List<Record> records = jdbcTemplate.query(SQL, new Object[] { wildcard, dateFrom, dateTo, limit, offset },
 					new RecordRowMapper());
 			return records;
 		} else {
-			String SQL = "SELECT * FROM record INNER JOIN sellings ON record.selling_id=sellings.id LIMIT ? OFFSET ?";
-			List<Record> records = jdbcTemplate.query(SQL, new Object[] { limit, offset }, new RecordRowMapper());
+			String SQL = "SELECT * FROM record INNER JOIN sellings ON record.selling_id=sellings.id WHERE sell_date BETWEEN ? AND ? LIMIT ? OFFSET ?";
+			List<Record> records = jdbcTemplate.query(SQL, new Object[] { dateFrom, dateTo, limit, offset }, new RecordRowMapper());
 			return records;
 		}
 	}
@@ -70,15 +71,15 @@ public class RecordDaoImpl implements RecordDao {
 		return jdbcTemplate.update(query, new Object[] { r.getSellingId() });
 	}
 
-	public int getNumOfRecords(String filterQuery) {
+	public int getNumOfRecords(String filterQuery, Date dateFrom, Date dateTo) {
 		System.out.println("in RecordDaoImpl.getNumOfRecords()");
 		if (filterQuery != null && !filterQuery.trim().isEmpty()) {
-			String SQL = "SELECT COUNT(*) FROM record RIGHT JOIN sellings ON record.selling_id=sellings.id WHERE LOWER(client) LIKE ?";
+			String SQL = "SELECT COUNT(*) FROM record RIGHT JOIN sellings ON record.selling_id=sellings.id WHERE LOWER(client) LIKE ? AND sell_date BETWEEN ? AND ?";
 			String wildcard = "%" + filterQuery.toLowerCase() + "%";
-			return jdbcTemplate.queryForObject(SQL, new Object[] { wildcard }, Integer.class);
+			return jdbcTemplate.queryForObject(SQL, new Object[] { wildcard, dateFrom, dateTo }, Integer.class);
 		} else {
-			String SQL = "SELECT COUNT(*) FROM record INNER JOIN sellings ON record.selling_id=sellings.id";
-			return jdbcTemplate.queryForObject(SQL, Integer.class);
+			String SQL = "SELECT COUNT(*) FROM record INNER JOIN sellings ON record.selling_id=sellings.id WHERE sell_date BETWEEN ? AND ?";
+			return jdbcTemplate.queryForObject(SQL, new Object[] { dateFrom, dateTo }, Integer.class);
 		}
 	}
 
@@ -86,6 +87,18 @@ public class RecordDaoImpl implements RecordDao {
 		System.out.println("in RecordDaoImpl.getLastSellingsId()");
 		String SQL = "SELECT MAX(id) FROM sellings";
 		return jdbcTemplate.queryForObject(SQL, new Object[] {}, Integer.class);
+	}
+	
+	public Date getOldestDate() {
+		System.out.println("in RecordDaoImpl.getOldestRecord()");
+		String SQL = "SELECT MIN(sell_date) FROM record INNER JOIN sellings ON record.selling_id=sellings.id";
+		return jdbcTemplate.queryForObject(SQL, Date.class);
+	}
+
+	public Date getNewestDate() {
+		System.out.println("in RecordDaoImpl.getNewestRecord()");
+		String SQL = "SELECT MAX(sell_date) FROM record INNER JOIN sellings ON record.selling_id=sellings.id";
+		return jdbcTemplate.queryForObject(SQL, Date.class);
 	}
 
 }

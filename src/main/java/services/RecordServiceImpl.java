@@ -1,5 +1,6 @@
 package services;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +19,17 @@ public class RecordServiceImpl implements RecordService{
 	@Autowired
 	private AlbumDao albumDao;
 
-	public List<Record> getRecords(String filterQuery, int start, int end) {
-		List<Record> records = recordDao.get(end-start, start, filterQuery);
+	public List<Record> getRecords(String filterQuery, int start, int end, Date dateFrom, Date dateTo) {
+		
+		List<Record> records = recordDao.get(end-start, start, filterQuery, dateFrom, dateTo);
 		for (Record r: records){
 			r.setAlbum(albumDao.getById(r.getAlbumId()));
 		}
 		return records;
 	}
 
-	public int getNumOfRecords(String filterQuery) {
-		return recordDao.getNumOfRecords(filterQuery);
+	public int getNumOfRecords(String filterQuery, Date dateFrom, Date dateTo) {
+		return recordDao.getNumOfRecords(filterQuery, dateFrom, dateTo);
 	}
 
 	public void createRecord(Record r) {
@@ -40,6 +42,14 @@ public class RecordServiceImpl implements RecordService{
 
 	public void deleteRecord(int id) {
 		recordDao.delete(id);
+	}
+
+	public Date getDateOfTheOldestRecord() {
+		return recordDao.getOldestDate();
+	}
+
+	public Date getDateOfTheNewestRecord() {
+		return recordDao.getNewestDate();
 	}
 
 }

@@ -19,7 +19,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
@@ -33,8 +32,10 @@ import org.springframework.stereotype.Component;
 import eventprocessorhelpers.JTableButtonMouseListener;
 import eventprocessorhelpers.JTableButtonRenderer;
 import eventprocessorhelpers.SwingUtils;
-import models.Musician;
 import models.Record;
+import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
+import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
+import net.sourceforge.jdatepicker.impl.UtilDateModel;
 import services.AlbumService;
 import services.RecordService;
 
@@ -49,6 +50,8 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 	
 	private JPanel mainPanel;
 	private String currentFilterQuery;
+	private Date dateFrom;
+	private Date dateTo;
 	final int recordsPerPage = 10;
 	int currentPage = 1;
 	int rowHeight;
@@ -62,6 +65,9 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 		mainPanel.setPreferredSize(sizeOfParentElement);
 		mainPanel.setBackground(Color.WHITE);
 		mainPanel.setLayout(new BorderLayout());
+		
+		dateFrom = recordService.getDateOfTheOldestRecord();
+		dateTo = recordService.getDateOfTheNewestRecord();
 		
 		searchAndCreatePanelPreferredSize = new Dimension(mainPanel.getPreferredSize().width,mainPanel.getPreferredSize().height/7);
 		listPanelPreferredSize = new Dimension(mainPanel.getPreferredSize().width, (int)(4*mainPanel.getPreferredSize().height)/7);
@@ -84,7 +90,7 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 		res.setPreferredSize(preferredSize);
 		rowHeight = mainPanel.getPreferredSize().height/20;
 		
-		List<Record> records = recordService.getRecords(query, start, start+limit);
+		List<Record> records = recordService.getRecords(query, start, start+limit, dateFrom, dateTo);
 		JTable recordTable = buildRecordTable(records, preferredSize);
 		
 		res.add(recordTable.getTableHeader(), BorderLayout.NORTH);
@@ -295,7 +301,7 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 	}
 	
 	private JPanel buildPaginationPanel(final Dimension preferredSize) {
-		int n = recordService.getNumOfRecords(currentFilterQuery);
+		int n = recordService.getNumOfRecords(currentFilterQuery, dateFrom, dateTo);
 		JPanel paginationPanel = new JPanel();
 		paginationPanel.setBackground(Color.WHITE);
 		paginationPanel.setLayout(new FlowLayout());
@@ -368,7 +374,7 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 				final JTextField dateInput = new JTextField(40);
 				dateInput.setText("mm/dd/yyyy");
 				final JTextField nameInput = new JTextField(40);
-				final JComboBox albumList = new JComboBox(albumService.getAlbumTitles().toArray());
+				final JComboBox<String> albumList = new JComboBox(albumService.getAlbumTitles().toArray());
 				final JTextField quantityInput = new JTextField(40);
 				
 				JButton cancelBtn = new JButton("Cancel");
@@ -462,6 +468,9 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 	}
 
 	private JPanel buildSearchPanel(Dimension preferredSize) {
+		JPanel resPanel = new JPanel();
+		resPanel.setLayout(new GridLayout(2, 1));
+		
 		JPanel searchPanel = new JPanel();
 		searchPanel.setBackground(Color.WHITE);
 		searchPanel.setLayout(new FlowLayout());
@@ -488,6 +497,78 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 		
 		searchPanel.add(filterQueryInput);
 		searchPanel.add(searchBtn);
-		return searchPanel;
+		
+		JPanel datePanel = new JPanel();
+		datePanel.setBackground(Color.WHITE);
+		
+		JLabel fromL = new JLabel("Показати продажі з ");
+		UtilDateModel model1 = new UtilDateModel(dateFrom);
+		model1.setSelected(true);
+		final JDatePickerImpl datePickerFrom = new JDatePickerImpl(new JDatePanelImpl(model1));
+		
+		datePickerFrom.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent e) {
+				dateFrom = (Date) datePickerFrom.getModel().getValue();
+				
+				DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+				String dateFormat = formatter.format(dateFrom);
+				System.out.println(dateFormat);
+				
+				currentPage = 1;
+				BorderLayout layout = (BorderLayout) mainPanel.getLayout();
+				mainPanel.remove(layout.getLayoutComponent(BorderLayout.CENTER));
+				mainPanel.add(buildRecordList(listPanelPreferredSize, recordsPerPage, (currentPage-1)*recordsPerPage, currentFilterQuery),BorderLayout.CENTER);
+				mainPanel.remove(layout.getLayoutComponent(BorderLayout.SOUTH));
+				mainPanel.add(buildPaginationPanel(paginationPanelPreferredSize), BorderLayout.SOUTH);
+				mainPanel.revalidate();
+				mainPanel.repaint();
+			}
+			
+		});
+		
+		JLabel toL = new JLabel(" до ");
+		UtilDateModel model2 = new UtilDateModel(dateTo);
+		model2.setSelected(true);
+		final JDatePickerImpl datePickerTo = new JDatePickerImpl(new JDatePanelImpl(model2));
+
+		datePickerTo.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent e) {
+				dateTo = (Date) datePickerTo.getModel().getValue();
+				
+				DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+				String dateFormat = formatter.format(dateTo);
+				System.out.println(dateFormat);
+				
+				currentPage = 1;
+				BorderLayout layout = (BorderLayout) mainPanel.getLayout();
+				mainPanel.remove(layout.getLayoutComponent(BorderLayout.CENTER));
+				mainPanel.add(buildRecordList(listPanelPreferredSize, recordsPerPage, (currentPage-1)*recordsPerPage, currentFilterQuery),BorderLayout.CENTER);
+				mainPanel.remove(layout.getLayoutComponent(BorderLayout.SOUTH));
+				mainPanel.add(buildPaginationPanel(paginationPanelPreferredSize), BorderLayout.SOUTH);
+				mainPanel.revalidate();
+				mainPanel.repaint();
+			}
+			
+		});
+		
+		datePanel.add(fromL);
+		datePanel.add(datePickerFrom);
+		datePanel.add(toL);
+		datePanel.add(datePickerTo);
+		
+		/*
+		DateFormat formatter = new SimpleDateFormat("mm/dd/yyyy"); 
+		try {
+			r.setDate((Date)formatter.parse(date));
+		} catch (ParseException e2) {
+			JOptionPane.showMessageDialog(null, "Incorrect date format");
+		}*/
+		
+		resPanel.add(searchPanel);
+		resPanel.add(datePanel);
+		
+		return resPanel;
 	}
 }
