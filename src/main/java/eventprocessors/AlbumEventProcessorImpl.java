@@ -39,6 +39,9 @@ import eventprocessorhelpers.SwingUtils;
 import models.Album;
 import models.Musician;
 import models.Song;
+import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
+import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
+import net.sourceforge.jdatepicker.impl.UtilDateModel;
 import services.AlbumService;
 import services.MusicianService;
 import services.SongService;
@@ -241,9 +244,9 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 				JButton saveBtn = new JButton("Save");
 				final JTextField titleInput = new JTextField(40);
 				titleInput.setText(album.getTitle());
-				final JTextField recorDateInput = new JTextField(40);
-				DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-				recorDateInput.setText(formatter.format(album.getRecordDate()));
+				UtilDateModel model = new UtilDateModel(album.getRecordDate());
+				model.setSelected(true);
+				final JDatePickerImpl datePicker = new JDatePickerImpl(new JDatePanelImpl(model));
 				final JTextField priceInput = new JTextField(40);
 				priceInput.setText(album.getPrice()+"");
 				final JTextField musicianRoyaltiesInput = new JTextField(40);
@@ -261,7 +264,7 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 				inputPanel.setBorder(new EmptyBorder(0, 50, 0, 30));
 				inputPanel.setLayout(new GridLayout(15, 1,15,15));
 				inputPanel.add(titleInput);
-				inputPanel.add(recorDateInput);
+				inputPanel.add(datePicker);
 				inputPanel.add(priceInput);
 				inputPanel.add(musicianRoyaltiesInput);
 				inputPanel.add(producerList);
@@ -296,7 +299,7 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 					
 					public void actionPerformed(ActionEvent e) {
 						String title = titleInput.getText().trim();
-						String recordDate = recorDateInput.getText().trim();
+						Date date = (Date) datePicker.getModel().getValue();
 						String price = priceInput.getText().trim();
 						String musicianRoyalties = musicianRoyaltiesInput.getText().trim();
 						String producerRoyalties = producerRoyalriesInput.getText().trim();
@@ -315,8 +318,7 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 								a.setProducerRoyalties(Double.parseDouble(producerRoyalties));
 								a.setPrice(Double.parseDouble(price));
 								a.setProducerFk(musicianService.getByName(producerName).getId());
-								DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy"); 
-								a.setRecordDate((Date)formatter.parse(recordDate));
+								a.setRecordDate(date);
 								a.setSongs(songsToAddToAlbum);
 								albumService.updateAlbum(a);
 								
@@ -393,8 +395,9 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 				
 				JButton saveBtn = new JButton("Save");
 				final JTextField titleInput = new JTextField(40);
-				final JTextField recorDateInput = new JTextField(40);
-				recorDateInput.setText("MM/dd/yyyy");
+				UtilDateModel model = new UtilDateModel();
+				model.setSelected(true);
+				final JDatePickerImpl datePicker = new JDatePickerImpl(new JDatePanelImpl(model));
 				final JTextField priceInput = new JTextField(40);
 				final JTextField musicianRoyaltiesInput = new JTextField(40);
 				final JTextField producerRoyalriesInput = new JTextField(40);
@@ -404,7 +407,7 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 				inputPanel.setBorder(new EmptyBorder(0, 50, 0, 30));
 				inputPanel.setLayout(new GridLayout(15, 1,15,15));
 				inputPanel.add(titleInput);
-				inputPanel.add(recorDateInput);
+				inputPanel.add(datePicker);
 				inputPanel.add(priceInput);
 				inputPanel.add(musicianRoyaltiesInput);
 				inputPanel.add(producerList);
@@ -440,7 +443,7 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 					
 					public void actionPerformed(ActionEvent e) {
 						String title = titleInput.getText().trim();
-						String recordDate = recorDateInput.getText().trim();
+						Date date = (Date) datePicker.getModel().getValue();
 						String price = priceInput.getText().trim();
 						String musicianRoyalties = musicianRoyaltiesInput.getText().trim();
 						String producerRoyalties = producerRoyalriesInput.getText().trim();
@@ -458,8 +461,7 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 								a.setProducerRoyalties(Double.parseDouble(producerRoyalties));
 								a.setPrice(Double.parseDouble(price));
 								a.setProducerFk(musicianService.getByName(producerName).getId());
-								DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy"); 
-								a.setRecordDate((Date)formatter.parse(recordDate));
+								a.setRecordDate(date);
 								a.setSongs(songsToAddToAlbum);
 								albumService.createAlbum(a);
 								
