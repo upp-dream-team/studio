@@ -185,8 +185,7 @@ public class SongEventProcessorImpl implements SongEventProcessor {
 		searchPanel.setLayout(new FlowLayout());
 		searchPanel.setPreferredSize(preferredSize);
 
-		final JTextField filterQueryInput = new JTextField(40);
-		filterQueryInput.setText("Search for . . .");
+		final JTextField filterQueryInput = SwingUtils.createTextFIeldWithPlaceholder(40, "Search for...");
 
 		JButton searchBtn = new JButton("Search");
 		searchBtn.addActionListener(new ActionListener() {

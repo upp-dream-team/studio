@@ -74,7 +74,7 @@ public class RecordDaoImpl implements RecordDao {
 	public int getNumOfRecords(String filterQuery, Date dateFrom, Date dateTo) {
 		System.out.println("in RecordDaoImpl.getNumOfRecords()");
 		if (filterQuery != null && !filterQuery.trim().isEmpty()) {
-			String SQL = "SELECT COUNT(*) FROM record RIGHT JOIN sellings ON record.selling_id=sellings.id WHERE LOWER(client) LIKE ? AND sell_date BETWEEN ? AND ?";
+			String SQL = "SELECT COUNT(*) FROM record INNER JOIN sellings ON record.selling_id=sellings.id WHERE LOWER(client) LIKE ? AND sell_date BETWEEN ? AND ?";
 			String wildcard = "%" + filterQuery.toLowerCase() + "%";
 			return jdbcTemplate.queryForObject(SQL, new Object[] { wildcard, dateFrom, dateTo }, Integer.class);
 		} else {
