@@ -1,10 +1,12 @@
 package eventprocessorhelpers;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import eventprocessors.MusicianEventProcessorImpl;
@@ -43,6 +45,12 @@ public class SwingUtils {
 			}
 			
 		});
+		return res;
+	}
+
+	public static JLabel createJLabelWithSpecifiedFont(String string, Font font) {
+		JLabel res = new JLabel(string);
+		res.setFont(font);
 		return res;
 	}
 }

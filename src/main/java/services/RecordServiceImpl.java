@@ -52,4 +52,12 @@ public class RecordServiceImpl implements RecordService{
 		return recordDao.getNewestDate();
 	}
 
+	public Double getTotal(String query, Date dateFrom, Date dateTo) {
+		Double total = recordDao.getTotal(query, dateFrom, dateTo);
+		if (total == null) {
+			total = 0.0;
+		}
+		return total;
+	}
+
 }

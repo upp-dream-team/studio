@@ -15,5 +15,6 @@ public interface RecordService {
 	public void deleteRecord(int id);
 	public Date getDateOfTheOldestRecord();
 	public Date getDateOfTheNewestRecord();
+	public Double getTotal(String query, Date dateFrom, Date dateTo);
 
 }

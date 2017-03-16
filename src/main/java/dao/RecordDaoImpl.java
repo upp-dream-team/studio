@@ -101,4 +101,16 @@ public class RecordDaoImpl implements RecordDao {
 		return jdbcTemplate.queryForObject(SQL, Date.class);
 	}
 
+	public Double getTotal(String filterQuery, Date dateFrom, Date dateTo) {
+		System.out.println("in RecordDaoImpl.getTotal()");
+		if (filterQuery != null && !filterQuery.trim().isEmpty()) {
+			String SQL = "SELECT SUM(quantity*price) FROM (record INNER JOIN sellings ON record.selling_id=sellings.id) INNER JOIN album ON sellings.album_id=album.id WHERE LOWER(client) LIKE ? AND sell_date BETWEEN ? AND ?";
+			String wildcard = "%" + filterQuery.toLowerCase() + "%";
+			return jdbcTemplate.queryForObject(SQL, new Object[] { wildcard, dateFrom, dateTo }, Double.class);
+		} else {
+			String SQL = "SELECT SUM(quantity*price) FROM (record INNER JOIN sellings ON record.selling_id=sellings.id) INNER JOIN album ON sellings.album_id=album.id WHERE sell_date BETWEEN ? AND ?";
+			return jdbcTemplate.queryForObject(SQL, new Object[] { dateFrom, dateTo }, Double.class);
+		}
+	}
+
 }

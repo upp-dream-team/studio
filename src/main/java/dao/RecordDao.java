@@ -16,5 +16,6 @@ public interface RecordDao {
 	
 	public Date getOldestDate();
 	public Date getNewestDate();
+	public Double getTotal(String query, Date dateFrom, Date dateTo);
 
 }

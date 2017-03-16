@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -86,16 +87,40 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 	
 	private JPanel buildRecordList(Dimension preferredSize, int limit, int start, String query){
 		JPanel res = new JPanel(new BorderLayout());
-		res.setBackground(Color.BLUE);
 		res.setPreferredSize(preferredSize);
 		rowHeight = mainPanel.getPreferredSize().height/20;
 		
 		List<Record> records = recordService.getRecords(query, start, start+limit, dateFrom, dateTo);
 		JTable recordTable = buildRecordTable(records, preferredSize);
 		
+		Double sum = 0.0;
+		for (Record r : records){
+			sum += r.getQuantity() * r.getAlbum().getPrice();
+		}
+		JPanel totalPanel = buildTotalPanel(query, sum);
+		
 		res.add(recordTable.getTableHeader(), BorderLayout.NORTH);
 		res.add(recordTable, BorderLayout.CENTER);
+		res.add(totalPanel, BorderLayout.SOUTH);
 		
+		return res;
+	}
+	
+	private JPanel buildTotalPanel(String query, Double totalForPage){
+		JPanel res = new JPanel(new BorderLayout());
+		res.setBackground(Color.WHITE);
+		JPanel totalPanelCont = new JPanel(new GridLayout(2, 2));
+		totalPanelCont.setBackground(Color.WHITE);
+		
+		Font f1 = new Font(Font.SANS_SERIF, Font.PLAIN, 14);
+		Font f2 = new Font(Font.SANS_SERIF, Font.BOLD, 16);
+		
+		totalPanelCont.add(SwingUtils.createJLabelWithSpecifiedFont("Total for this page: ", f1));
+		totalPanelCont.add(SwingUtils.createJLabelWithSpecifiedFont(totalForPage.toString(), f2));
+		totalPanelCont.add(SwingUtils.createJLabelWithSpecifiedFont("Total for all pages: ", f1));
+		totalPanelCont.add(SwingUtils.createJLabelWithSpecifiedFont(recordService.getTotal(query, dateFrom, dateTo).toString(), f2));
+		
+		res.add(totalPanelCont, BorderLayout.EAST);
 		return res;
 	}
 
@@ -136,20 +161,24 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 		columnModel.getColumn(2).setPreferredWidth(3*preferredSize.width/13);
 		columnModel.getColumn(3).setPreferredWidth(3*preferredSize.width/13);
 		
-		table.setRowHeight(rowHeight);
+		if(records.size() == 0) {
+        	model.insertRow(0, new Object[]{ "", "No results" , null , null, null, null, null, null });
+		} else {
+			table.setRowHeight(rowHeight);
 
-		for (int i = 0; i < numRecords; i++) {
-			Record r = records.get(i);
-			Object[] data = new Object[8];
-			data[0] = Integer.toString((currentPage-1) * recordsPerPage + i + 1);
-			data[1] = r.getDate().toString();
-			data[2] = r.getClient();
-			data[3] = r.getAlbum().getTitle();
-			data[4] = Integer.toString(r.getQuantity());
-			data[5] = Double.toString(r.getAlbum().getPrice() * r.getQuantity());
-			data[6] = buildEditButton(r);
-			data[7] = buildDeleteButton(r);
-			model.insertRow(i, data);
+			for (int i = 0; i < numRecords; i++) {
+				Record r = records.get(i);
+				Object[] data = new Object[8];
+				data[0] = Integer.toString((currentPage-1) * recordsPerPage + i + 1);
+				data[1] = r.getDate().toString();
+				data[2] = r.getClient();
+				data[3] = r.getAlbum().getTitle();
+				data[4] = Integer.toString(r.getQuantity());
+				data[5] = Double.toString(r.getAlbum().getPrice() * r.getQuantity());
+				data[6] = buildEditButton(r);
+				data[7] = buildDeleteButton(r);
+				model.insertRow(i, data);
+			}
 		}
 		table.getTableHeader().setBackground(Color.WHITE);
 		table.setBackground(Color.WHITE);
