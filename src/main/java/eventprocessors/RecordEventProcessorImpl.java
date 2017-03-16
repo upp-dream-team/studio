@@ -586,14 +586,6 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 		datePanel.add(toL);
 		datePanel.add(datePickerTo);
 		
-		/*
-		DateFormat formatter = new SimpleDateFormat("mm/dd/yyyy"); 
-		try {
-			r.setDate((Date)formatter.parse(date));
-		} catch (ParseException e2) {
-			JOptionPane.showMessageDialog(null, "Incorrect date format");
-		}*/
-		
 		resPanel.add(searchPanel);
 		resPanel.add(datePanel);
 		

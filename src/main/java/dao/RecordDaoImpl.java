@@ -23,13 +23,13 @@ public class RecordDaoImpl implements RecordDao {
 	public List<Record> get(int limit, int offset, String filterQuery, Date dateFrom, Date dateTo) {
 		System.out.println("in RecordDaoImpl.get()");
 		if (filterQuery != null && !filterQuery.trim().isEmpty()) {
-			String SQL = "SELECT * FROM record INNER JOIN sellings ON record.selling_id=sellings.id WHERE LOWER(client) LIKE ? AND sell_date BETWEEN ? AND ? LIMIT ? OFFSET ?";
+			String SQL = "SELECT * FROM record INNER JOIN sellings ON record.selling_id=sellings.id WHERE LOWER(client) LIKE ? AND sell_date BETWEEN ? AND ? ORDER BY sell_date LIMIT ? OFFSET ?";
 			String wildcard = "%" + filterQuery.toLowerCase() + "%";
 			List<Record> records = jdbcTemplate.query(SQL, new Object[] { wildcard, dateFrom, dateTo, limit, offset },
 					new RecordRowMapper());
 			return records;
 		} else {
-			String SQL = "SELECT * FROM record INNER JOIN sellings ON record.selling_id=sellings.id WHERE sell_date BETWEEN ? AND ? LIMIT ? OFFSET ?";
+			String SQL = "SELECT * FROM record INNER JOIN sellings ON record.selling_id=sellings.id WHERE sell_date BETWEEN ? AND ? ORDER BY sell_date LIMIT ? OFFSET ?";
 			List<Record> records = jdbcTemplate.query(SQL, new Object[] { dateFrom, dateTo, limit, offset }, new RecordRowMapper());
 			return records;
 		}

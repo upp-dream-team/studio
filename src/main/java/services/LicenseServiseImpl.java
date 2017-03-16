@@ -1,5 +1,6 @@
 package services;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +19,16 @@ public class LicenseServiseImpl implements LicenseService{
 	@Autowired
 	private AlbumDao albumDao;
 
-	public List<License> getLicenses(String filterQuery, int start, int end) {
-		List<License> records = licenseDao.get(end-start, start, filterQuery);
+	public List<License> getLicenses(String filterQuery, int start, int end, Date dateFrom, Date dateTo) {
+		List<License> records = licenseDao.get(end-start, start, filterQuery, dateFrom, dateTo);
 		for (License r: records){
 			r.setAlbum(albumDao.getById(r.getAlbumId()));
 		}
 		return records;
 	}
 	
-	public int getNumOfLicenses(String filterQuery) {
-		return licenseDao.getNumOfLicenses(filterQuery);
+	public int getNumOfLicenses(String filterQuery, Date dateFrom, Date dateTo) {
+		return licenseDao.getNumOfLicenses(filterQuery, dateFrom, dateTo);
 	}
 
 	public void createLicense(License license) {
@@ -40,6 +41,14 @@ public class LicenseServiseImpl implements LicenseService{
 
 	public void deleteLicense(int id) {
 		licenseDao.delete(id);
+	}
+
+	public Date getDateOfTheOldestLicense() {
+		return licenseDao.getOldestDate();
+	}
+
+	public Date getDateOfTheNewestLicense() {
+		return licenseDao.getNewestDate();
 	}
 
 }

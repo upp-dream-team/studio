@@ -33,6 +33,9 @@ import eventprocessorhelpers.JTableButtonMouseListener;
 import eventprocessorhelpers.JTableButtonRenderer;
 import eventprocessorhelpers.SwingUtils;
 import models.Musician;
+import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
+import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
+import net.sourceforge.jdatepicker.impl.UtilDateModel;
 import models.License;
 import services.AlbumService;
 import services.LicenseService;
@@ -48,6 +51,8 @@ public class LicenseEventProcessorImpl implements LicenseEventProcessor {
 	
 	private JPanel mainPanel;
 	private String currentFilterQuery;
+	private Date dateFrom;
+	private Date dateTo;
 	final int licensesPerPage = 10;
 	int currentPage = 1;
 	int rowHeight;
@@ -61,6 +66,9 @@ public class LicenseEventProcessorImpl implements LicenseEventProcessor {
 		mainPanel.setPreferredSize(sizeOfParentElement);
 		mainPanel.setBackground(Color.WHITE);
 		mainPanel.setLayout(new BorderLayout());
+		
+		dateFrom = licenseService.getDateOfTheOldestLicense();
+		dateTo = licenseService.getDateOfTheNewestLicense();
 		
 		searchAndCreatePanelPreferredSize = new Dimension(mainPanel.getPreferredSize().width,mainPanel.getPreferredSize().height/7);
 		listPanelPreferredSize = new Dimension(mainPanel.getPreferredSize().width, (int)(4*mainPanel.getPreferredSize().height)/7);
@@ -83,7 +91,7 @@ public class LicenseEventProcessorImpl implements LicenseEventProcessor {
 		res.setPreferredSize(preferredSize);
 		rowHeight = mainPanel.getPreferredSize().height/20;
 		
-		List<License> licenses = licenseService.getLicenses(query, start, start+limit);
+		List<License> licenses = licenseService.getLicenses(query, start, start+limit, dateFrom, dateTo);
 		JTable licenseTable = buildLicenseTable(licenses, preferredSize);
 		
 		res.add(licenseTable.getTableHeader(), BorderLayout.NORTH);
@@ -118,29 +126,30 @@ public class LicenseEventProcessorImpl implements LicenseEventProcessor {
 		JTable table = new JTable(model);
 
 		TableCellRenderer buttonRenderer = new JTableButtonRenderer();
-		table.getColumnModel().getColumn(6).setCellRenderer(buttonRenderer);
 		table.getColumnModel().getColumn(7).setCellRenderer(buttonRenderer);
+		table.getColumnModel().getColumn(8).setCellRenderer(buttonRenderer);
 
-		for (int i : new int[]{0,4,5,6,7}){
-			table.getColumnModel().getColumn(i).setPreferredWidth(preferredSize.width/13);
+		for (int i : new int[]{0,4,5,6,7,8}){
+			table.getColumnModel().getColumn(i).setPreferredWidth(preferredSize.width/14);
 		}
-		table.getColumnModel().getColumn(1).setPreferredWidth(2*preferredSize.width/13);
-		table.getColumnModel().getColumn(2).setPreferredWidth(3*preferredSize.width/13);
-		table.getColumnModel().getColumn(3).setPreferredWidth(3*preferredSize.width/13);
+		table.getColumnModel().getColumn(1).setPreferredWidth(2*preferredSize.width/14);
+		table.getColumnModel().getColumn(2).setPreferredWidth(3*preferredSize.width/14);
+		table.getColumnModel().getColumn(3).setPreferredWidth(3*preferredSize.width/14);
 		
 		table.setRowHeight(rowHeight);
 
 		for (int i = 0; i < numLicenses; i++) {
 			License r = licenses.get(i);
-			Object[] data = new Object[8];
+			Object[] data = new Object[9];
 			data[0] = Integer.toString((currentPage-1) * licensesPerPage + i + 1);
 			data[1] = r.getDate().toString();
 			data[2] = r.getClient();
 			data[3] = r.getAlbum().getTitle();
 			data[4] = Integer.toString(r.getPeriod());
-			data[5] = Double.toString(r.getPrice() * r.getPeriod());
-			data[6] = buildEditButton(r);
-			data[7] = buildDeleteButton(r);
+			data[5] = Double.toString(r.getPrice());
+			data[6] = Double.toString(r.getPrice() * r.getPeriod());
+			data[7] = buildEditButton(r);
+			data[8] = buildDeleteButton(r);
 			model.insertRow(i, data);
 		}
 		table.getTableHeader().setBackground(Color.WHITE);
@@ -306,7 +315,7 @@ public class LicenseEventProcessorImpl implements LicenseEventProcessor {
 	}
 	
 	private JPanel buildPaginationPanel(final Dimension preferredSize) {
-		int n = licenseService.getNumOfLicenses(currentFilterQuery);
+		int n = licenseService.getNumOfLicenses(currentFilterQuery, dateFrom, dateTo);
 		JPanel paginationPanel = new JPanel();
 		paginationPanel.setBackground(Color.WHITE);
 		paginationPanel.setLayout(new FlowLayout());
@@ -485,6 +494,9 @@ public class LicenseEventProcessorImpl implements LicenseEventProcessor {
 	}
 
 	private JPanel buildSearchPanel(Dimension preferredSize) {
+		JPanel resPanel = new JPanel();
+		resPanel.setLayout(new GridLayout(2, 1));
+		
 		JPanel searchPanel = new JPanel();
 		searchPanel.setBackground(Color.WHITE);
 		searchPanel.setLayout(new FlowLayout());
@@ -510,6 +522,69 @@ public class LicenseEventProcessorImpl implements LicenseEventProcessor {
 		
 		searchPanel.add(filterQueryInput);
 		searchPanel.add(searchBtn);
-		return searchPanel;
+		
+		JPanel datePanel = new JPanel();
+		datePanel.setBackground(Color.WHITE);
+		
+		JLabel fromL = new JLabel("Показати продажі з ");
+		UtilDateModel model1 = new UtilDateModel(dateFrom);
+		model1.setSelected(true);
+		final JDatePickerImpl datePickerFrom = new JDatePickerImpl(new JDatePanelImpl(model1));
+		
+		datePickerFrom.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent e) {
+				dateFrom = (Date) datePickerFrom.getModel().getValue();
+				
+				DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+				String dateFormat = formatter.format(dateFrom);
+				System.out.println(dateFormat);
+				
+				currentPage = 1;
+				BorderLayout layout = (BorderLayout) mainPanel.getLayout();
+				mainPanel.remove(layout.getLayoutComponent(BorderLayout.CENTER));
+				mainPanel.add(buildLicenseList(listPanelPreferredSize, licensesPerPage, (currentPage-1)*licensesPerPage, currentFilterQuery),BorderLayout.CENTER);
+				mainPanel.remove(layout.getLayoutComponent(BorderLayout.SOUTH));
+				mainPanel.add(buildPaginationPanel(paginationPanelPreferredSize), BorderLayout.SOUTH);
+				mainPanel.revalidate();
+				mainPanel.repaint();
+			}
+			
+		});
+		
+		JLabel toL = new JLabel(" до ");
+		UtilDateModel model2 = new UtilDateModel(dateTo);
+		model2.setSelected(true);
+		final JDatePickerImpl datePickerTo = new JDatePickerImpl(new JDatePanelImpl(model2));
+
+		datePickerTo.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent e) {
+				dateTo = (Date) datePickerTo.getModel().getValue();
+				
+				DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+				String dateFormat = formatter.format(dateTo);
+				System.out.println(dateFormat);
+				
+				currentPage = 1;
+				BorderLayout layout = (BorderLayout) mainPanel.getLayout();
+				mainPanel.remove(layout.getLayoutComponent(BorderLayout.CENTER));
+				mainPanel.add(buildLicenseList(listPanelPreferredSize, licensesPerPage, (currentPage-1)*licensesPerPage, currentFilterQuery),BorderLayout.CENTER);
+				mainPanel.remove(layout.getLayoutComponent(BorderLayout.SOUTH));
+				mainPanel.add(buildPaginationPanel(paginationPanelPreferredSize), BorderLayout.SOUTH);
+				mainPanel.revalidate();
+				mainPanel.repaint();
+			}
+			
+		});
+		
+		datePanel.add(fromL);
+		datePanel.add(datePickerFrom);
+		datePanel.add(toL);
+		datePanel.add(datePickerTo);
+		
+		resPanel.add(searchPanel);
+		resPanel.add(datePanel);
+		return resPanel;
 	}
 }

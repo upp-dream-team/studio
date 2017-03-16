@@ -1,5 +1,6 @@
 package dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,17 +16,17 @@ public class LicenseDaoImpl implements LicenseDao {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	public List<License> get(int limit, int offset, String filterQuery) {
+	public List<License> get(int limit, int offset, String filterQuery, Date dateFrom, Date dateTo) {
 		System.out.println("in LicenseDaoImpl.get()");
 		if (filterQuery != null && !filterQuery.trim().isEmpty()) {
-			String SQL = "SELECT * FROM license INNER JOIN sellings ON license.selling_id=sellings.id WHERE client LIKE ? LIMIT ? OFFSET ?";
-			String wildcard = "%" + filterQuery + "%";
-			List<License> records = jdbcTemplate.query(SQL, new Object[] { wildcard, limit, offset },
+			String SQL = "SELECT * FROM license INNER JOIN sellings ON license.selling_id=sellings.id WHERE LOWER(client) LIKE ? AND sell_date BETWEEN ? AND ? ORDER BY sell_date LIMIT ? OFFSET ?";
+			String wildcard = "%" + filterQuery.toLowerCase() + "%";
+			List<License> records = jdbcTemplate.query(SQL, new Object[] { wildcard, dateFrom, dateTo, limit, offset },
 					new LicenseRowMapper());
 			return records;
 		} else {
-			String SQL = "SELECT * FROM license INNER JOIN sellings ON license.selling_id=sellings.id LIMIT ? OFFSET ?";
-			List<License> records = jdbcTemplate.query(SQL, new Object[] { limit, offset }, new LicenseRowMapper());
+			String SQL = "SELECT * FROM license INNER JOIN sellings ON license.selling_id=sellings.id WHERE sell_date BETWEEN ? AND ? ORDER BY sell_date LIMIT ? OFFSET ?";
+			List<License> records = jdbcTemplate.query(SQL, new Object[] { dateFrom, dateTo, limit, offset }, new LicenseRowMapper());
 			return records;
 		}
 	}
@@ -67,22 +68,34 @@ public class LicenseDaoImpl implements LicenseDao {
 		return jdbcTemplate.update(query, new Object[] { license.getSellingId() });
 	}
 	
-	public int getNumOfLicenses(String filterQuery) {
+	public int getNumOfLicenses(String filterQuery, Date dateFrom, Date dateTo) {
 		System.out.println("in LicenseDaoImpl.getNumOfRecords()");
 		if (filterQuery != null && !filterQuery.trim().isEmpty()) {
-			String SQL = "SELECT COUNT(*) FROM license RIGHT JOIN sellings ON license.selling_id=sellings.id WHERE LOWER(client) LIKE ?";
+			String SQL = "SELECT COUNT(*) FROM license RIGHT JOIN sellings ON license.selling_id=sellings.id WHERE LOWER(client) LIKE ? AND sell_date BETWEEN ? AND ?";
 			String wildcard = "%" + filterQuery.toLowerCase() + "%";
-			return jdbcTemplate.queryForObject(SQL, new Object[] { wildcard }, Integer.class);
+			return jdbcTemplate.queryForObject(SQL, new Object[] { wildcard, dateFrom, dateTo }, Integer.class);
 		} else {
-			String SQL = "SELECT COUNT(*) FROM license INNER JOIN sellings ON license.selling_id=sellings.id";
-			return jdbcTemplate.queryForObject(SQL, Integer.class);
+			String SQL = "SELECT COUNT(*) FROM license INNER JOIN sellings ON license.selling_id=sellings.id WHERE sell_date BETWEEN ? AND ?";
+			return jdbcTemplate.queryForObject(SQL, new Object[] { dateFrom, dateTo }, Integer.class);
 		}
 	}
 
 	private int getLastSellingsId() {
-		System.out.println("in RecordDaoImpl.getLastSellingsId()");
+		System.out.println("in LicenseDaoImpl.getLastSellingsId()");
 		String SQL = "SELECT MAX(id) FROM sellings";
 		return jdbcTemplate.queryForObject(SQL, new Object[] {}, Integer.class);
+	}
+
+	public Date getOldestDate() {
+		System.out.println("in LicenseDaoImpl.getOldestRecord()");
+		String SQL = "SELECT MIN(sell_date) FROM license INNER JOIN sellings ON license.selling_id=sellings.id";
+		return jdbcTemplate.queryForObject(SQL, Date.class);
+	}
+
+	public Date getNewestDate() {
+		System.out.println("in LicenseDaoImpl.getNewestRecord()");
+		String SQL = "SELECT MAX(sell_date) FROM license INNER JOIN sellings ON license.selling_id=sellings.id";
+		return jdbcTemplate.queryForObject(SQL, Date.class);
 	}
 
 }
