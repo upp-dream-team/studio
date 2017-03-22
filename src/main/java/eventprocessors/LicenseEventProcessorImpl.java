@@ -264,6 +264,7 @@ public class LicenseEventProcessorImpl implements LicenseEventProcessor {
 							try {
 								licenseService.updateLicense(r);
 							} catch(Exception ex) {
+								ex.printStackTrace();
 								JOptionPane.showMessageDialog(null, "Failed to update the license in the DB");
 							}
 							currentPage = 1;
@@ -471,6 +472,7 @@ public class LicenseEventProcessorImpl implements LicenseEventProcessor {
 								System.out.println("licenseService.createLicense(r);");
 								licenseService.createLicense(r);
 							} catch(Exception ex) {
+								ex.printStackTrace();
 								JOptionPane.showMessageDialog(null, "Failed to save the license to the DB");
 							}
 		

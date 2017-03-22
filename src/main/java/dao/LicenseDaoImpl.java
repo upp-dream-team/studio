@@ -40,8 +40,7 @@ public class LicenseDaoImpl implements LicenseDao {
 		String query = "INSERT INTO sellings (client, sell_date, album_id) VALUES (?, ?, ?)";
 		jdbcTemplate.update(query,
 				new Object[] { license.getClient(), license.getDate(), license.getAlbum().getId() });
-		// dangerous!
-		int sellings_id = getLastSellingsId();
+		int sellings_id = getLastNotBindedId();
 		if (sellings_id == -1) {
 			return -1;
 		}
@@ -77,11 +76,6 @@ public class LicenseDaoImpl implements LicenseDao {
 		}
 	}
 
-	private int getLastSellingsId() {
-		String SQL = "SELECT MAX(id) FROM sellings";
-		return jdbcTemplate.queryForObject(SQL, new Object[] {}, Integer.class);
-	}
-
 	public Date getOldestDate() {
 		String SQL = "SELECT MIN(sell_date) FROM license INNER JOIN sellings ON license.selling_id=sellings.id";
 		return jdbcTemplate.queryForObject(SQL, Date.class);
@@ -101,6 +95,13 @@ public class LicenseDaoImpl implements LicenseDao {
 			String SQL = "SELECT SUM(period*price) FROM license INNER JOIN sellings ON license.selling_id=sellings.id WHERE sell_date BETWEEN ? AND ?";
 			return jdbcTemplate.queryForObject(SQL, new Object[] { dateFrom, dateTo }, Double.class);
 		}
+	}
+	
+	private int getLastNotBindedId() {
+		String SQL = "SELECT MAX(id) FROM sellings WHERE NOT EXISTS " +
+						"(SELECT * FROM record WHERE record.selling_id=sellings.id) AND NOT EXISTS " +
+						"(SELECT * FROM license WHERE license.selling_id=sellings.id)";
+		return jdbcTemplate.queryForObject(SQL, new Object[] {}, Integer.class);
 	}
 
 }

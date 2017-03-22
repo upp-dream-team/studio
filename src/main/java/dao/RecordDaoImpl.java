@@ -44,11 +44,10 @@ public class RecordDaoImpl implements RecordDao {
 		String query = "INSERT INTO sellings (client, sell_date, album_id) VALUES (?, ?, ?)";
 		jdbcTemplate.update(query,
 				new Object[] { record.getClient(), record.getDate(), record.getAlbum().getId() });
-		int sellings_id = getLastSellingsId();
+		int sellings_id = getLastNotBindedId();
 		if (sellings_id == -1) {
 			return -1;
 		}
-
 		query = "INSERT INTO record (quantity, selling_id) VALUES (?, ?)";
 		return jdbcTemplate.update(query, new Object[] { record.getQuantity(), sellings_id });
 	}
@@ -79,11 +78,6 @@ public class RecordDaoImpl implements RecordDao {
 			return jdbcTemplate.queryForObject(SQL, new Object[] { dateFrom, dateTo }, Integer.class);
 		}
 	}
-
-	private int getLastSellingsId() {
-		String SQL = "SELECT MAX(id) FROM sellings";
-		return jdbcTemplate.queryForObject(SQL, new Object[] {}, Integer.class);
-	}
 	
 	public Date getOldestDate() {
 		String SQL = "SELECT MIN(sell_date) FROM record INNER JOIN sellings ON record.selling_id=sellings.id";
@@ -104,6 +98,13 @@ public class RecordDaoImpl implements RecordDao {
 			String SQL = "SELECT SUM(quantity*price) FROM (record INNER JOIN sellings ON record.selling_id=sellings.id) INNER JOIN album ON sellings.album_id=album.id WHERE sell_date BETWEEN ? AND ?";
 			return jdbcTemplate.queryForObject(SQL, new Object[] { dateFrom, dateTo }, Double.class);
 		}
+	}
+	
+	private int getLastNotBindedId() {
+		String SQL = "SELECT MAX(id) FROM sellings WHERE NOT EXISTS " +
+						"(SELECT * FROM record WHERE record.selling_id=sellings.id) AND NOT EXISTS " +
+						"(SELECT * FROM license WHERE license.selling_id=sellings.id)";
+		return jdbcTemplate.queryForObject(SQL, new Object[] {}, Integer.class);
 	}
 
 }

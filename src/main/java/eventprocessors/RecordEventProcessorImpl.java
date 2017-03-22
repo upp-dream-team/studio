@@ -254,6 +254,7 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 							try {
 								recordService.updateRecord(r);
 							} catch(Exception ex) {
+								ex.printStackTrace();
 								JOptionPane.showMessageDialog(null, "Failed to update the record in the DB");
 							}
 							currentPage = 1;
@@ -451,6 +452,7 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 								//System.out.println("recordService.createRecord(r);");
 								recordService.createRecord(r);
 							} catch(Exception ex) {
+								ex.printStackTrace();
 								JOptionPane.showMessageDialog(null, "Failed to save the record to the DB");
 							}
 		
