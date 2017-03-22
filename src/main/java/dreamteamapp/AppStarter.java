@@ -67,8 +67,8 @@ public class AppStarter {
 		MenuButton songs = new MenuButton("Songs", alignmentX);
 		MenuButton instruments = new MenuButton("Instruments", alignmentX);
 		MenuButton financial = new MenuButton("Financial Affairs", alignmentX);
-		MenuButton licenses = new MenuButton("Licenses", alignmentX);
-		MenuButton sales = new MenuButton("Sales", alignmentX);
+		// MenuButton licenses = new MenuButton("Licenses", alignmentX);
+		// MenuButton sales = new MenuButton("Sales", alignmentX);
 
 		albums.addActionListener(new ActionListener() {
 
@@ -119,7 +119,7 @@ public class AppStarter {
 			
 		});
 		
-		sales.addActionListener(new ActionListener(){
+		/* sales.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent e) {
 				contentPanel.removeAll();
@@ -145,7 +145,7 @@ public class AppStarter {
 				
 			}
 			
-		});
+		}); */
 		
 		container.add(menuPanel, BorderLayout.WEST);
 		container.add(contentPanel, BorderLayout.EAST);
@@ -157,8 +157,8 @@ public class AppStarter {
 		menuPanel.add(songs);
 		menuPanel.add(instruments);
 		menuPanel.add(financial);
-		menuPanel.add(licenses);
-		menuPanel.add(sales);
+		// menuPanel.add(licenses);
+		// menuPanel.add(sales);
 
 		JPanel contentPanelWrapper = new JPanel();
 		contentPanel.setBackground(Color.WHITE);

@@ -26,7 +26,10 @@ public class FinancialAffairsServiceImpl implements FinancialAffairsService {
 	@Autowired
 	private SellingDao sellingDao;
 
-	public List<Selling> getSellings(String filterQuery, int startForRecords, int startForLicenses, int limit, Date dateFrom, Date dateTo) {
+	public List<Selling> getSellings(String filterQuery, int start, int limit, Date dateFrom, Date dateTo) {
+		int startForRecords = start == 0 ? 0 : sellingDao.getStartForRecords(filterQuery, start, dateFrom, dateTo);
+		int startForLicenses = start == 0 ? 0 : sellingDao.getStartForLicenses(filterQuery, start, dateFrom, dateTo);
+		System.out.println("startForRecords = " + startForRecords + ", startForLicenses = " + startForLicenses);
 		List<Record> records = recordService.getRecords(filterQuery, startForRecords, startForRecords+limit, dateFrom, dateTo);
 		List<License> licenses = licenseService.getLicenses(filterQuery, startForLicenses, startForLicenses+limit, dateFrom, dateTo);
 		List<Selling> res = new LinkedList<Selling>();
@@ -41,12 +44,10 @@ public class FinancialAffairsServiceImpl implements FinancialAffairsService {
 	}
 
 	public int getNumOfSellings(String filterQuery, Date dateFrom, Date dateTo) {
-		return recordService.getNumOfRecords(filterQuery, dateFrom, dateTo) + licenseService.getNumOfLicenses(filterQuery, dateFrom, dateTo);
+		return sellingDao.getNumOfSellings(filterQuery, dateFrom, dateTo);
 	}
 
 	public Double getTotal(String query, Date dateFrom, Date dateTo) {
-		System.out.println(recordService.getTotal(query, dateFrom, dateTo));
-		System.out.println(licenseService.getTotal(query, dateFrom, dateTo));
 		return recordService.getTotal(query, dateFrom, dateTo) + licenseService.getTotal(query, dateFrom, dateTo);
 	}
 
@@ -56,11 +57,6 @@ public class FinancialAffairsServiceImpl implements FinancialAffairsService {
 
 	public Date getDateOfTheNewestSelling() {
 		return sellingDao.getNewestDate();
-	}
-
-	// govnokod
-	public List<Selling> getAll(String filterQuery, Date dateFrom, Date dateTo) {
-		return getSellings(filterQuery, 0, 0, getNumOfSellings(filterQuery, dateFrom, dateTo), dateFrom, dateTo);
 	}
 
 }

@@ -21,7 +21,6 @@ public class RecordDaoImpl implements RecordDao {
 	private JdbcTemplate jdbcTemplate;
 
 	public List<Record> get(int limit, int offset, String filterQuery, Date dateFrom, Date dateTo) {
-		System.out.println("in RecordDaoImpl.get()");
 		if (filterQuery != null && !filterQuery.trim().isEmpty()) {
 			String SQL = "SELECT * FROM record INNER JOIN sellings ON record.selling_id=sellings.id WHERE LOWER(client) LIKE ? AND sell_date BETWEEN ? AND ? ORDER BY sell_date LIMIT ? OFFSET ?";
 			String wildcard = "%" + filterQuery.toLowerCase() + "%";
@@ -42,7 +41,6 @@ public class RecordDaoImpl implements RecordDao {
 	}
 
 	public int insert(Record record) {
-		System.out.println("in RecordDaoImpl.insert()");
 		String query = "INSERT INTO sellings (client, sell_date, album_id) VALUES (?, ?, ?)";
 		jdbcTemplate.update(query,
 				new Object[] { record.getClient(), record.getDate(), record.getAlbum().getId() });
@@ -72,7 +70,6 @@ public class RecordDaoImpl implements RecordDao {
 	}
 
 	public int getNumOfRecords(String filterQuery, Date dateFrom, Date dateTo) {
-		System.out.println("in RecordDaoImpl.getNumOfRecords()");
 		if (filterQuery != null && !filterQuery.trim().isEmpty()) {
 			String SQL = "SELECT COUNT(*) FROM record INNER JOIN sellings ON record.selling_id=sellings.id WHERE LOWER(client) LIKE ? AND sell_date BETWEEN ? AND ?";
 			String wildcard = "%" + filterQuery.toLowerCase() + "%";
@@ -84,25 +81,21 @@ public class RecordDaoImpl implements RecordDao {
 	}
 
 	private int getLastSellingsId() {
-		System.out.println("in RecordDaoImpl.getLastSellingsId()");
 		String SQL = "SELECT MAX(id) FROM sellings";
 		return jdbcTemplate.queryForObject(SQL, new Object[] {}, Integer.class);
 	}
 	
 	public Date getOldestDate() {
-		System.out.println("in RecordDaoImpl.getOldestRecord()");
 		String SQL = "SELECT MIN(sell_date) FROM record INNER JOIN sellings ON record.selling_id=sellings.id";
 		return jdbcTemplate.queryForObject(SQL, Date.class);
 	}
 
 	public Date getNewestDate() {
-		System.out.println("in RecordDaoImpl.getNewestRecord()");
 		String SQL = "SELECT MAX(sell_date) FROM record INNER JOIN sellings ON record.selling_id=sellings.id";
 		return jdbcTemplate.queryForObject(SQL, Date.class);
 	}
 
 	public Double getTotal(String filterQuery, Date dateFrom, Date dateTo) {
-		System.out.println("in RecordDaoImpl.getTotal()");
 		if (filterQuery != null && !filterQuery.trim().isEmpty()) {
 			String SQL = "SELECT SUM(quantity*price) FROM (record INNER JOIN sellings ON record.selling_id=sellings.id) INNER JOIN album ON sellings.album_id=album.id WHERE LOWER(client) LIKE ? AND sell_date BETWEEN ? AND ?";
 			String wildcard = "%" + filterQuery.toLowerCase() + "%";

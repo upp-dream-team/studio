@@ -60,9 +60,6 @@ public class FinancialAffairsEventProcessorImpl implements FinancialAffairsEvent
 	private int currentPage = 1;
 	private int rowHeight;
 	
-	private int startForRecords = 0;
-	private int startForLicenses = 0;
-	
 	private Dimension whatToShowPanelSize;
 	private Dimension financesPanelSize;
 	
@@ -70,11 +67,7 @@ public class FinancialAffairsEventProcessorImpl implements FinancialAffairsEvent
 	private Dimension paginationPanelPreferredSize;
 	private Dimension searchAndCreatePanelPreferredSize;
 	
-	// govnokod
-	private List<Selling> allSellings;
-
 	public JPanel process(Dimension sizeOfParentElement) {
-		System.out.println("in FinancialAffairsEventProcessor");
 		mainPanel = new JPanel();
 		mainPanel.setPreferredSize(sizeOfParentElement);
 		mainPanel.setBackground(Color.WHITE);
@@ -82,7 +75,6 @@ public class FinancialAffairsEventProcessorImpl implements FinancialAffairsEvent
 		
 		dateFrom = financialAffairsService.getDateOfTheOldestSelling();
 		dateTo = financialAffairsService.getDateOfTheNewestSelling();
-		allSellings = financialAffairsService.getAll(currentFilterQuery, dateFrom, dateTo);
 		
 		final int whatToShowPanelHeight = 50;
 		whatToShowPanelSize = new Dimension((int) (sizeOfParentElement.getWidth()), whatToShowPanelHeight);
@@ -194,7 +186,7 @@ public class FinancialAffairsEventProcessorImpl implements FinancialAffairsEvent
 			public void actionPerformed(ActionEvent e) {     
 				currentFilterQuery = filterQueryInput.getText();
 				currentPage = 1;
-				BorderLayout layout = (BorderLayout) mainPanel.getLayout();
+				BorderLayout layout = (BorderLayout) financesPanel.getLayout();
 				financesPanel.remove(layout.getLayoutComponent(BorderLayout.CENTER));
 				financesPanel.add(buildTablePanel(listPanelPreferredSize, recordsPerPage, (currentPage-1)*recordsPerPage, currentFilterQuery),BorderLayout.CENTER);
 				financesPanel.remove(layout.getLayoutComponent(BorderLayout.SOUTH));
@@ -275,21 +267,16 @@ public class FinancialAffairsEventProcessorImpl implements FinancialAffairsEvent
 		res.setPreferredSize(preferredSize);
 		rowHeight = financesPanelSize.height/20;
 		
-		//List<Selling> sellings = financialAffairsService.getSellings(query, startForRecords, startForLicenses, limit, dateFrom, dateTo);
-		//System.out.println("in buildTablePanel() ===> sellings.size() = " + sellings.size());
-		
-		allSellings = financialAffairsService.getAll(currentFilterQuery, dateFrom, dateTo);
-		List<Selling> sellings = allSellings.subList(start, allSellings.size() < start+limit ? allSellings.size() : start+limit);
+		List<Selling> sellings = financialAffairsService.getSellings(query, start, limit, dateFrom, dateTo);	
+		sellings = sellings.subList(0, 10 <= sellings.size() ? 10 : sellings.size());
 		
 		JTable table = buildRecordTable(sellings, preferredSize);
 		
 		Double sum = 0.0;
 		for (Selling s : sellings){
 			if (s.isLicense()){
-				// startForLicenses++;
 				sum += s.getPrice() * s.getPeriod();
 			} else {
-				// startForRecords++;
 				sum += s.getQuantity() * s.getAlbum().getPrice();
 			}
 			

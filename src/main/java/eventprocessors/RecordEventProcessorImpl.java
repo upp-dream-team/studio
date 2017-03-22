@@ -74,8 +74,6 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 		listPanelPreferredSize = new Dimension(mainPanel.getPreferredSize().width, (int)(4*mainPanel.getPreferredSize().height)/7);
 		paginationPanelPreferredSize = new Dimension(mainPanel.getPreferredSize().width, mainPanel.getPreferredSize().height/7);
 		
-		System.out.println("REP listPanelPS ===> " + listPanelPreferredSize.toString());
-		
 		JPanel searchPanel = buildSearchAndCreatePanel(searchAndCreatePanelPreferredSize);
 		JPanel tablePanel = buildRecordList(listPanelPreferredSize, recordsPerPage, 0, "");
 		JPanel paginationPanel = buildPaginationPanel(paginationPanelPreferredSize);

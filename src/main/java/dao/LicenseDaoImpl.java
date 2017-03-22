@@ -17,7 +17,6 @@ public class LicenseDaoImpl implements LicenseDao {
 	private JdbcTemplate jdbcTemplate;
 
 	public List<License> get(int limit, int offset, String filterQuery, Date dateFrom, Date dateTo) {
-		System.out.println("in LicenseDaoImpl.get()");
 		if (filterQuery != null && !filterQuery.trim().isEmpty()) {
 			String SQL = "SELECT * FROM license INNER JOIN sellings ON license.selling_id=sellings.id WHERE LOWER(client) LIKE ? AND sell_date BETWEEN ? AND ? ORDER BY sell_date LIMIT ? OFFSET ?";
 			String wildcard = "%" + filterQuery.toLowerCase() + "%";
@@ -38,7 +37,6 @@ public class LicenseDaoImpl implements LicenseDao {
 	}
 
 	public int insert(License license) {
-		System.out.println("in LicenseDaoImpl.insert()");
 		String query = "INSERT INTO sellings (client, sell_date, album_id) VALUES (?, ?, ?)";
 		jdbcTemplate.update(query,
 				new Object[] { license.getClient(), license.getDate(), license.getAlbum().getId() });
@@ -69,7 +67,6 @@ public class LicenseDaoImpl implements LicenseDao {
 	}
 	
 	public int getNumOfLicenses(String filterQuery, Date dateFrom, Date dateTo) {
-		System.out.println("in LicenseDaoImpl.getNumOfRecords()");
 		if (filterQuery != null && !filterQuery.trim().isEmpty()) {
 			String SQL = "SELECT COUNT(*) FROM license RIGHT JOIN sellings ON license.selling_id=sellings.id WHERE LOWER(client) LIKE ? AND sell_date BETWEEN ? AND ?";
 			String wildcard = "%" + filterQuery.toLowerCase() + "%";
@@ -81,25 +78,21 @@ public class LicenseDaoImpl implements LicenseDao {
 	}
 
 	private int getLastSellingsId() {
-		System.out.println("in LicenseDaoImpl.getLastSellingsId()");
 		String SQL = "SELECT MAX(id) FROM sellings";
 		return jdbcTemplate.queryForObject(SQL, new Object[] {}, Integer.class);
 	}
 
 	public Date getOldestDate() {
-		System.out.println("in LicenseDaoImpl.getOldestRecord()");
 		String SQL = "SELECT MIN(sell_date) FROM license INNER JOIN sellings ON license.selling_id=sellings.id";
 		return jdbcTemplate.queryForObject(SQL, Date.class);
 	}
 
 	public Date getNewestDate() {
-		System.out.println("in LicenseDaoImpl.getNewestRecord()");
 		String SQL = "SELECT MAX(sell_date) FROM license INNER JOIN sellings ON license.selling_id=sellings.id";
 		return jdbcTemplate.queryForObject(SQL, Date.class);
 	}
 
 	public Double getTotal(String filterQuery, Date dateFrom, Date dateTo) {
-		System.out.println("in LicenseDaoImpl.getTotal()");
 		if (filterQuery != null && !filterQuery.trim().isEmpty()) {
 			String SQL = "SELECT SUM(period*price) FROM license INNER JOIN sellings ON license.selling_id=sellings.id WHERE LOWER(client) LIKE ? AND sell_date BETWEEN ? AND ?";
 			String wildcard = "%" + filterQuery.toLowerCase() + "%";
