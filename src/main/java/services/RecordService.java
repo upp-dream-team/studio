@@ -5,6 +5,7 @@ import java.util.List;
 
 import models.Musician;
 import models.Record;
+import models.Selling;
 
 public interface RecordService {
 	

@@ -17,6 +17,7 @@ public class RecordRowMapper implements RowMapper<Record>{
 		r.setQuantity(rs.getInt("quantity"));
 		r.setAlbumId(rs.getInt("album_id"));
 		r.setSellingId(rs.getInt("selling_id"));
+		r.setLicense(false);
 		return r;
 	}
 

@@ -74,6 +74,8 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 		listPanelPreferredSize = new Dimension(mainPanel.getPreferredSize().width, (int)(4*mainPanel.getPreferredSize().height)/7);
 		paginationPanelPreferredSize = new Dimension(mainPanel.getPreferredSize().width, mainPanel.getPreferredSize().height/7);
 		
+		System.out.println("REP listPanelPS ===> " + listPanelPreferredSize.toString());
+		
 		JPanel searchPanel = buildSearchAndCreatePanel(searchAndCreatePanelPreferredSize);
 		JPanel tablePanel = buildRecordList(listPanelPreferredSize, recordsPerPage, 0, "");
 		JPanel paginationPanel = buildPaginationPanel(paginationPanelPreferredSize);
@@ -186,7 +188,7 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 		return table;
 	}
 
-	private JButton buildEditButton(final Record r) {
+	public JButton buildEditButton(final Record r) {
 		Icon editIcon = SwingUtils.createImageIcon("/icons/edit.png","Edit");
 		JButton b = new JButton(editIcon);
 		b.setBackground(Color.WHITE);
@@ -292,7 +294,7 @@ public class RecordEventProcessorImpl implements RecordEventProcessor {
 		return b;
 	}
 
-	private JButton buildDeleteButton(final Record r) {
+	public JButton buildDeleteButton(final Record r) {
 		Icon deleteIcon = SwingUtils.createImageIcon("/icons/delete.png","Delete");
 		JButton b = new JButton(deleteIcon);
 		b.setBackground(Color.WHITE);

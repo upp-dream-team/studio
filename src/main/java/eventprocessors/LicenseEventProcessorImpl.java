@@ -185,7 +185,7 @@ public class LicenseEventProcessorImpl implements LicenseEventProcessor {
 		return table;
 	}
 
-	private JButton buildEditButton(final License r) {
+	public JButton buildEditButton(final License r) {
 		Icon editIcon = SwingUtils.createImageIcon("/icons/edit.png","Edit");
 		JButton b = new JButton(editIcon);
 		b.setBackground(Color.WHITE);
@@ -304,7 +304,7 @@ public class LicenseEventProcessorImpl implements LicenseEventProcessor {
 		return b;
 	}
 
-	private JButton buildDeleteButton(final License r) {
+	public JButton buildDeleteButton(final License r) {
 		Icon deleteIcon = SwingUtils.createImageIcon("/icons/delete.png","Delete");
 		JButton b = new JButton(deleteIcon);
 		b.setBackground(Color.WHITE);

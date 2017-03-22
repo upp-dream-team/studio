@@ -36,6 +36,9 @@ public class AppStarter {
 	
 	@Autowired
 	private LicenseEventProcessor licenseEventProcessor;
+	
+	@Autowired
+	private FinancialAffairsEventProcessor financialAffairsEventProcessor;
 
 	public AppStarter() {
 
@@ -97,6 +100,19 @@ public class AppStarter {
 				JPanel songsPanel = songEventProcessor.process(contentPanel.getSize());
 				songsPanel.setPreferredSize(contentPanel.getSize());
 				contentPanel.add(songsPanel);
+				contentPanel.revalidate();
+				contentPanel.repaint();
+			}
+			
+		});
+		
+		financial.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				contentPanel.removeAll();
+				JPanel faPanel = financialAffairsEventProcessor.process(contentPanel.getSize());
+				faPanel.setPreferredSize(contentPanel.getSize());
+				contentPanel.add(faPanel);
 				contentPanel.revalidate();
 				contentPanel.repaint();
 			}

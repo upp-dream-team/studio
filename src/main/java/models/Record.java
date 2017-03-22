@@ -2,39 +2,9 @@ package models;
 
 import java.util.Date;
 
-public class Record {
+public class Record extends Selling {
 
-	private int id;
-	private String client;
-	private Date date;
 	private int quantity;
-	private int albumId;
-	private Album album;
-	private int sellingId;
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public String getClient() {
-		return client;
-	}
-
-	public void setClient(String client) {
-		this.client = client;
-	}
-
-	public Date getDate() {
-		return date;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
 
 	public int getQuantity() {
 		return quantity;
@@ -44,28 +14,16 @@ public class Record {
 		this.quantity = quantity;
 	}
 
-	public Album getAlbum() {
-		return album;
+	@Override
+	public float getPrice() {
+		throw new UnsupportedOperationException(
+				"[Exception] Trying to call getPrice() method on the instance of Record class");
 	}
 
-	public void setAlbum(Album album) {
-		this.album = album;
-	}
-
-	public int getAlbumId() {
-		return albumId;
-	}
-
-	public void setAlbumId(int albumId) {
-		this.albumId = albumId;
-	}
-
-	public int getSellingId() {
-		return sellingId;
-	}
-
-	public void setSellingId(int sellingId) {
-		this.sellingId = sellingId;
+	@Override
+	public int getPeriod() {
+		throw new UnsupportedOperationException(
+				"[Exception] Trying to call getPeriod() method on the instance of Record class");
 	}
 
 }
