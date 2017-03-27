@@ -32,12 +32,6 @@ public class AppStarter {
 	private SongEventProcessor songEventProcessor;
 	
 	@Autowired
-	private RecordEventProcessor recordEventProcessor;
-	
-	@Autowired
-	private LicenseEventProcessor licenseEventProcessor;
-	
-	@Autowired
 	private FinancialAffairsEventProcessor financialAffairsEventProcessor;
 
 	public AppStarter() {
@@ -67,8 +61,6 @@ public class AppStarter {
 		MenuButton songs = new MenuButton("Songs", alignmentX);
 		MenuButton instruments = new MenuButton("Instruments", alignmentX);
 		MenuButton financial = new MenuButton("Financial Affairs", alignmentX);
-		// MenuButton licenses = new MenuButton("Licenses", alignmentX);
-		// MenuButton sales = new MenuButton("Sales", alignmentX);
 
 		albums.addActionListener(new ActionListener() {
 
@@ -119,34 +111,6 @@ public class AppStarter {
 			
 		});
 		
-		/* sales.addActionListener(new ActionListener(){
-
-			public void actionPerformed(ActionEvent e) {
-				contentPanel.removeAll();
-				JPanel salesPanel = recordEventProcessor.process(contentPanel.getSize());
-				salesPanel.setPreferredSize(contentPanel.getSize());
-				contentPanel.add(salesPanel);
-				contentPanel.revalidate();
-				contentPanel.repaint();
-				
-			}
-			
-		});
-		
-		licenses.addActionListener(new ActionListener(){
-
-			public void actionPerformed(ActionEvent e) {
-				contentPanel.removeAll();
-				JPanel salesPanel = licenseEventProcessor.process(contentPanel.getSize());
-				salesPanel.setPreferredSize(contentPanel.getSize());
-				contentPanel.add(salesPanel);
-				contentPanel.revalidate();
-				contentPanel.repaint();
-				
-			}
-			
-		}); */
-		
 		container.add(menuPanel, BorderLayout.WEST);
 		container.add(contentPanel, BorderLayout.EAST);
 		container.setVisible(true);
@@ -157,8 +121,6 @@ public class AppStarter {
 		menuPanel.add(songs);
 		menuPanel.add(instruments);
 		menuPanel.add(financial);
-		// menuPanel.add(licenses);
-		// menuPanel.add(sales);
 
 		JPanel contentPanelWrapper = new JPanel();
 		contentPanel.setBackground(Color.WHITE);

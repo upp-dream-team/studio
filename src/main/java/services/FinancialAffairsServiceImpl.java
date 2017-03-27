@@ -59,4 +59,52 @@ public class FinancialAffairsServiceImpl implements FinancialAffairsService {
 		return sellingDao.getNewestDate();
 	}
 
+	public void deleteRecord(int id) {
+		recordService.deleteRecord(id);
+	}
+
+	public void updateRecord(Record r) {
+		recordService.updateRecord(r);
+	}
+
+	public List<Record> getRecords(String filterQuery, int start, int end, Date dateFrom, Date dateTo) {
+		return recordService.getRecords(filterQuery, start, end, dateFrom, dateTo);
+	}
+
+	public List<License> getLicenses(String filterQuery, int start, int end, Date dateFrom, Date dateTo) {
+		return licenseService.getLicenses(filterQuery, start, end, dateFrom, dateTo);
+	}
+
+	public void deleteLicense(int id) {
+		licenseService.deleteLicense(id);
+	}
+	
+	public void updateLicense(License l){
+		licenseService.updateLicense(l);
+	}
+
+	public int getNumOfRecords(String filterQuery, Date dateFrom, Date dateTo) {
+		return recordService.getNumOfRecords(filterQuery, dateFrom, dateTo);
+	}
+
+	public int getNumOfLicenses(String filterQuery, Date dateFrom, Date dateTo) {
+		return licenseService.getNumOfLicenses(filterQuery, dateFrom, dateTo);
+	}
+
+	public Double getTotalForRecords(String query, Date dateFrom, Date dateTo) {
+		return recordService.getTotal(query, dateFrom, dateTo);
+	}
+
+	public Double getTotalForLicenses(String query, Date dateFrom, Date dateTo) {
+		return licenseService.getTotal(query, dateFrom, dateTo);
+	}
+
+	public void createRecord(Record r) {
+		recordService.createRecord(r);
+	}
+	
+	public void createLicense(License l){
+		licenseService.createLicense(l);
+	}
+
 }

@@ -22,6 +22,10 @@ public class RecordServiceImpl implements RecordService{
 	public List<Record> getRecords(String filterQuery, int start, int end, Date dateFrom, Date dateTo) {
 		
 		List<Record> records = recordDao.get(end-start, start, filterQuery, dateFrom, dateTo);
+		System.out.println("in Service: records.size() = " + records.size());
+		System.out.println("            filterQuery = " + filterQuery);
+		System.out.println("            start = " + start);
+		System.out.println("            end = " + end);
 		for (Record r: records){
 			r.setAlbum(albumDao.getById(r.getAlbumId()));
 		}
