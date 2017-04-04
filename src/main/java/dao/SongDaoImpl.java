@@ -33,7 +33,7 @@ public class SongDaoImpl implements SongDao {
 
 	public void add(Song song) {
 		String query = "INSERT INTO song (author, title, album) VALUES (?, ?, ?)";
-		jdbcTemplate.update(query, song.getAuthor(), song.getTitle(), song.getAlbumFk());
+		jdbcTemplate.update(query, song.getAuthor(), song.getTitle(), song.getAlbum().getId());
 	}
 
 	public int delete(int id) {
@@ -42,8 +42,8 @@ public class SongDaoImpl implements SongDao {
 	}
 
 	public int update(Song s) {
-		String query = "UPDATE song SET title = ?, author = ? WHERE id = ?";
-		return jdbcTemplate.update(query, new Object[] { s.getTitle(), s.getAuthor(), s.getId() });
+		String query = "UPDATE song SET title = ?, author = ?, album = ? WHERE id = ?";
+		return jdbcTemplate.update(query, new Object[] { s.getTitle(), s.getAuthor(), s.getAlbum().getId(), s.getId() });
 	}
 
 	public int getNumOfSongs(String filterQuery) {

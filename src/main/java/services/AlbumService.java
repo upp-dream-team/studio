@@ -12,4 +12,5 @@ public interface AlbumService {
 	public void createAlbum(Album a);
 	public void updateAlbum(Album a);
 	public void deleteAlbum(int id);
+	public Album getAlbum(String title);
 }

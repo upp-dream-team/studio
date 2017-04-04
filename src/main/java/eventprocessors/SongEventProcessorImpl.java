@@ -28,6 +28,7 @@ import eventprocessorhelpers.JTableButtonMouseListener;
 import eventprocessorhelpers.JTableButtonRenderer;
 import eventprocessorhelpers.SwingUtils;
 import models.Song;
+import services.AlbumService;
 import services.SongService;
 
 @Component
@@ -35,6 +36,8 @@ public class SongEventProcessorImpl implements SongEventProcessor {
 
 	@Autowired
 	private SongService songService;
+	@Autowired
+    private AlbumService albumService;
 
 	private JPanel mainPanel;
 	private String currentFilterQuery;
@@ -105,13 +108,15 @@ public class SongEventProcessorImpl implements SongEventProcessor {
 				JPanel form = new JPanel();
 				form.setBorder(new EmptyBorder(10, 10, 30, 10));
 				form.setSize(searchAndCreatePanelPreferredSize);
-				form.setLayout(new GridLayout(3, 2));
+				form.setLayout(new GridLayout(4, 2));
 
 				JLabel titleL = new JLabel("Title");
 				JLabel authorL = new JLabel("Author");
+                JLabel albumL = new JLabel("Album");
 
 				final JTextField titleInput = new JTextField(40);
 				final JTextField authorInput = new JTextField(40);
+                final JTextField albumInput = new JTextField(40);
 
 				JButton cancelBtn = new JButton("Cancel");
 				JButton saveBtn = new JButton("Save");
@@ -132,15 +137,21 @@ public class SongEventProcessorImpl implements SongEventProcessor {
 					public void actionPerformed(ActionEvent e) {
 						String title = titleInput.getText().trim();
 						String author = authorInput.getText().trim();
+						String album = albumInput.getText().trim();
 
 						if (title == null || title.isEmpty()) {
 							JOptionPane.showMessageDialog(null, "Field 'Title' is required");
 						} else if (author == null || author.isEmpty()) {
 							JOptionPane.showMessageDialog(null, "Field 'Author' is required");
-						} else {
+						}else if (album == null || album.isEmpty()) {
+                            JOptionPane.showMessageDialog(null, "Field 'Album' is required");
+                        }else if (!albumService.getAlbumTitles().contains(album)) {
+                            JOptionPane.showMessageDialog(null, "No such Album!");
+                        } else {
 							Song s = new Song();
 							s.setTitle(title);
 							s.setAuthor(author);
+							s.setAlbum(albumService.getAlbum(album));
 							try {
 								songService.add(s);
 							} catch (Exception ex) {
@@ -166,6 +177,8 @@ public class SongEventProcessorImpl implements SongEventProcessor {
 				form.add(titleInput);
 				form.add(authorL);
 				form.add(authorInput);
+                form.add(albumL);
+                form.add(albumInput);
 				form.add(cancelBtn);
 				form.add(saveBtn);
 
@@ -300,15 +313,18 @@ public class SongEventProcessorImpl implements SongEventProcessor {
 				JPanel editFormPanel = new JPanel();
 				editFormPanel.setBorder(new EmptyBorder(10, 10, 30, 10));
 				editFormPanel.setSize(searchAndCreatePanelPreferredSize);
-				editFormPanel.setLayout(new GridLayout(3, 2));
+				editFormPanel.setLayout(new GridLayout(4, 2));
 
 				JLabel titleL = new JLabel("Title");
 				JLabel authorL = new JLabel("Author");
+				JLabel albumL = new JLabel("Album");
 
 				final JTextField titleInput = new JTextField(40);
 				titleInput.setText(s.getTitle());
 				final JTextField authorInput = new JTextField(40);
 				authorInput.setText(s.getAuthor());
+                final JTextField albumInput = new JTextField(40);
+                albumInput.setText(s.getAlbum().getTitle());
 
 				JButton cancelBtn = new JButton("Cancel");
 				JButton saveBtn = new JButton("Save");
@@ -329,14 +345,20 @@ public class SongEventProcessorImpl implements SongEventProcessor {
 					public void actionPerformed(ActionEvent e) {
 						String title = titleInput.getText().trim();
 						String author = authorInput.getText().trim();
+						String album = albumInput.getText().trim();
 
 						if (title == null || title.isEmpty()) {
 							JOptionPane.showMessageDialog(null, "Field 'Title' is required");
 						} else if (author == null || author.isEmpty()) {
 							JOptionPane.showMessageDialog(null, "Field 'Author' is required");
-						} else {
+						} else if (album == null || album.isEmpty()) {
+                            JOptionPane.showMessageDialog(null, "Field 'Album' is required");
+                        }else if (!albumService.getAlbumTitles().contains(album)) {
+                            JOptionPane.showMessageDialog(null, "No such Album!");
+                        }else {
 							s.setTitle(title);
 							s.setAuthor(author);
+							s.setAlbum(albumService.getAlbum(album));
 							try {
 								songService.update(s);
 							} catch (Exception ex) {
@@ -362,6 +384,8 @@ public class SongEventProcessorImpl implements SongEventProcessor {
 				editFormPanel.add(titleInput);
 				editFormPanel.add(authorL);
 				editFormPanel.add(authorInput);
+                editFormPanel.add(albumL);
+                editFormPanel.add(albumInput);
 				editFormPanel.add(cancelBtn);
 				editFormPanel.add(saveBtn);
 

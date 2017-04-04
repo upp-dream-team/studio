@@ -14,4 +14,5 @@ public interface AlbumDao {
 	public int update(Album album);
 	public int delete(int id);
 	public int getNumOfAlbums(String filterQuery);
+	public Album getByTitle(String title);
 }

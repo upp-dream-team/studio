@@ -134,6 +134,16 @@ public class AlbumDaoImpl implements AlbumDao {
 		}
 	}
 
+	public Album getByTitle(String title) {
+		String query = "select * from album where title = ?";
+		Album album = (Album)jdbcTemplate.queryForObject(query, new Object[] { title }, new AlbumRowMapper());
+
+		String songsQuery = "SELECT * FROM song WHERE album = ?";
+		album.setSongs(jdbcTemplate.query(songsQuery, new Object[]{ album.getId()}, new SongRowMapper()));
+
+		return album;
+	}
+
 	public List<String> getAlbumTitles() {
 		String query = "SELECT title FROM album";
 		return jdbcTemplate.queryForList(query, String.class);
