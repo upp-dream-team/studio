@@ -32,4 +32,11 @@ public class Musician {
 	public void setInstruments(List<Instrument> instruments) {
 		this.instruments = instruments;
 	}
+
+	@Override
+	public String toString() {
+		return "Musician{" +
+				"name='" + name + '\'' +
+				'}';
+	}
 }

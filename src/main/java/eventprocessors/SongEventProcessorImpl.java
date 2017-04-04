@@ -9,18 +9,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 
+import models.Album;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -108,7 +103,7 @@ public class SongEventProcessorImpl implements SongEventProcessor {
 				JPanel form = new JPanel();
 				form.setBorder(new EmptyBorder(10, 10, 30, 10));
 				form.setSize(searchAndCreatePanelPreferredSize);
-				form.setLayout(new GridLayout(4, 2));
+				form.setLayout(new GridLayout(5, 2));
 
 				JLabel titleL = new JLabel("Title");
 				JLabel authorL = new JLabel("Author");
@@ -116,7 +111,7 @@ public class SongEventProcessorImpl implements SongEventProcessor {
 
 				final JTextField titleInput = new JTextField(40);
 				final JTextField authorInput = new JTextField(40);
-                final JTextField albumInput = new JTextField(40);
+                final JComboBox <String> albumJComboBox = new JComboBox<String>(albumService.getAlbumTitles().toArray(new String[albumService.getAlbumTitles().size()]));
 
 				JButton cancelBtn = new JButton("Cancel");
 				JButton saveBtn = new JButton("Save");
@@ -137,7 +132,7 @@ public class SongEventProcessorImpl implements SongEventProcessor {
 					public void actionPerformed(ActionEvent e) {
 						String title = titleInput.getText().trim();
 						String author = authorInput.getText().trim();
-						String album = albumInput.getText().trim();
+						String album = albumJComboBox.getSelectedItem().toString();
 
 						if (title == null || title.isEmpty()) {
 							JOptionPane.showMessageDialog(null, "Field 'Title' is required");
@@ -178,7 +173,7 @@ public class SongEventProcessorImpl implements SongEventProcessor {
 				form.add(authorL);
 				form.add(authorInput);
                 form.add(albumL);
-                form.add(albumInput);
+                form.add(albumJComboBox);
 				form.add(cancelBtn);
 				form.add(saveBtn);
 
@@ -259,20 +254,21 @@ public class SongEventProcessorImpl implements SongEventProcessor {
 			}
 		};
 
-		model.setColumnIdentifiers(new Object[] { "#", "Title", "Author", "Album", "", "" });
+		model.setColumnIdentifiers(new Object[] { "#", "Title", "Author", "Album", "Musicians", "", "" });
 		JTable table = new JTable(model);
 		TableColumnModel columnModel = table.getColumnModel();
 
 		TableCellRenderer buttonRenderer = new JTableButtonRenderer();
-		columnModel.getColumn(4).setCellRenderer(buttonRenderer);
 		columnModel.getColumn(5).setCellRenderer(buttonRenderer);
+		columnModel.getColumn(6).setCellRenderer(buttonRenderer);
 
-		columnModel.getColumn(0).setPreferredWidth(preferredSize.width / 9);
-		columnModel.getColumn(1).setPreferredWidth(2 * preferredSize.width / 9);
-		columnModel.getColumn(2).setPreferredWidth(2 * preferredSize.width / 9);
-		columnModel.getColumn(3).setPreferredWidth(2 * preferredSize.width / 9);
-		columnModel.getColumn(4).setPreferredWidth(preferredSize.width / 9);
-		columnModel.getColumn(5).setPreferredWidth(preferredSize.width / 9);
+		columnModel.getColumn(0).setPreferredWidth(preferredSize.width / 11);
+		columnModel.getColumn(1).setPreferredWidth(2 * preferredSize.width / 11);
+		columnModel.getColumn(2).setPreferredWidth(2 * preferredSize.width / 11);
+		columnModel.getColumn(3).setPreferredWidth(2 * preferredSize.width / 11);
+        columnModel.getColumn(4).setPreferredWidth(2 * preferredSize.width / 11);
+		columnModel.getColumn(5).setPreferredWidth(preferredSize.width / 11);
+		columnModel.getColumn(6).setPreferredWidth(preferredSize.width / 11);
 
 		table.setRowHeight(rowHeight);
 
@@ -287,9 +283,9 @@ public class SongEventProcessorImpl implements SongEventProcessor {
 			} else {
 				data[3] = " - ";
 			}
-			
-			data[4] = buildEditButton(s);
-			data[5] = buildDeleteButton(s);
+			data[4] = s.getMusicians().toString();
+			data[5] = buildEditButton(s);
+			data[6] = buildDeleteButton(s);
 			model.insertRow(i, data);
 		}
 		table.getTableHeader().setBackground(Color.WHITE);
@@ -323,8 +319,8 @@ public class SongEventProcessorImpl implements SongEventProcessor {
 				titleInput.setText(s.getTitle());
 				final JTextField authorInput = new JTextField(40);
 				authorInput.setText(s.getAuthor());
-                final JTextField albumInput = new JTextField(40);
-                albumInput.setText(s.getAlbum().getTitle());
+                final JComboBox <String> albumJComboBox = new JComboBox<String>(albumService.getAlbumTitles().toArray(new String[albumService.getAlbumTitles().size()]));
+                albumJComboBox.setSelectedItem(s.getAlbum().getTitle());
 
 				JButton cancelBtn = new JButton("Cancel");
 				JButton saveBtn = new JButton("Save");
@@ -345,7 +341,7 @@ public class SongEventProcessorImpl implements SongEventProcessor {
 					public void actionPerformed(ActionEvent e) {
 						String title = titleInput.getText().trim();
 						String author = authorInput.getText().trim();
-						String album = albumInput.getText().trim();
+						String album = albumJComboBox.getSelectedItem().toString();
 
 						if (title == null || title.isEmpty()) {
 							JOptionPane.showMessageDialog(null, "Field 'Title' is required");
@@ -385,7 +381,7 @@ public class SongEventProcessorImpl implements SongEventProcessor {
 				editFormPanel.add(authorL);
 				editFormPanel.add(authorInput);
                 editFormPanel.add(albumL);
-                editFormPanel.add(albumInput);
+                editFormPanel.add(albumJComboBox);
 				editFormPanel.add(cancelBtn);
 				editFormPanel.add(saveBtn);
 
