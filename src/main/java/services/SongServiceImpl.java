@@ -17,6 +17,9 @@ public class SongServiceImpl implements SongService{
 	
 	@Autowired
 	private AlbumDao albumDao;
+
+	@Autowired
+
 	
 	public List<Song> get(int start, int end, String filterQuery) {
 		List<Song> songs= songDao.get(end-start, start, filterQuery);
