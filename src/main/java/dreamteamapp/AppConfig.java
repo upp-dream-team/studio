@@ -20,7 +20,7 @@ public class AppConfig {
         dataSource.setDriverClassName("com.mysql.jdbc.Driver");
         dataSource.setUrl("jdbc:mysql://localhost:3306/projman9");
         dataSource.setUsername("root");
-        dataSource.setPassword("root");
+        dataSource.setPassword("xoma");
         return dataSource;
     }
  
