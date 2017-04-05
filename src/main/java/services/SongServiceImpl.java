@@ -63,4 +63,12 @@ public class SongServiceImpl implements SongService{
 		return songDao.getNumOfSongs(currentFilterQuery);
 	}
 
+    public void addMusician(String musicianName, Song song) {
+        songDao.addMusician(musicianDao.getByName(musicianName), song);
+    }
+
+    public void deleteMusician(String musicianName, Song song) {
+        songDao.deleteMusician(musicianDao.getByName(musicianName), song);
+    }
+
 }

@@ -145,7 +145,7 @@ public class MusicianEventProcessorImpl  implements MusicianEventProcessor{
         	for (int i = 0; i < musicians.size(); ++i){
         		JButton editBtn = buildEditMusicianButton(musicians.get(i));
         		JButton deleteBtn = buildDeleteMusicianButton(musicians.get(i));
-        		String instrument = !musicians.get(i).getInstruments().isEmpty() ? musicians.get(i).getInstruments().toString(): " ";
+        		String instrument = !musicians.get(i).getInstruments().isEmpty() ? musicians.get(i).getInstruments().toString() : " - ";
                 model.insertRow(i, new Object[]{ ""+((currentPage-1)*musiciansPerPage+i+1), musicians.get(i).getName() , musicians.get(i).getPhone(), instrument,editBtn, deleteBtn });
                 table.setRowHeight(i, rowHeight);
             }

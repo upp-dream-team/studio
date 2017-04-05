@@ -1,6 +1,8 @@
 package dao;
 
 import java.util.List;
+
+import models.Musician;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -55,6 +57,16 @@ public class SongDaoImpl implements SongDao {
 			String SQL = "SELECT COUNT(*) FROM song";
 			return jdbcTemplate.queryForObject(SQL, Integer.class);
 		}
+	}
+
+	public void addMusician(Musician musician, Song song) {
+		String query = "INSERT INTO rozpodil (musician_id, song_id, gonorar_chastka) VALUES (?, ?, ?)";
+		jdbcTemplate.update(query, musician.getId(), song.getId(), 15);
+	}
+
+	public void deleteMusician(Musician musician, Song song) {
+		String query = "DELETE FROM rozpodil WHERE musician_id = ? AND song_id = ?";
+		jdbcTemplate.update(query, musician.getId(), song.getId());
 	}
 
 }
