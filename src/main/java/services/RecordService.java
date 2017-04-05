@@ -17,5 +17,5 @@ public interface RecordService {
 	public Date getDateOfTheOldestRecord();
 	public Date getDateOfTheNewestRecord();
 	public Double getTotal(String query, Date dateFrom, Date dateTo);
-
+	public int getNumOfSoldRecordsByAlbumId(int albumId);
 }

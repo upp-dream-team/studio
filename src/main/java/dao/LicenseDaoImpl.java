@@ -97,6 +97,15 @@ public class LicenseDaoImpl implements LicenseDao {
 		}
 	}
 	
+	public int getNumOfSoldLicensesByAlbumId(int albumId) {
+		String SQL = "SELECT COUNT(*) FROM license INNER JOIN sellings AS s ON selling_id = s.id WHERE s.album_id = ?";
+		Integer res =  jdbcTemplate.queryForObject(SQL, new Object[] { albumId }, Integer.class);
+		if(res == null)
+			return 0;
+		else
+			return res;
+	}
+	
 	private int getLastNotBindedId() {
 		String SQL = "SELECT MAX(id) FROM sellings WHERE NOT EXISTS " +
 						"(SELECT * FROM record WHERE record.selling_id=sellings.id) AND NOT EXISTS " +

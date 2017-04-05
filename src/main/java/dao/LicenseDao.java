@@ -17,4 +17,5 @@ public interface LicenseDao {
 	public Date getNewestDate();
 	public Double getTotal(String query, Date dateFrom, Date dateTo);
 
+	public int getNumOfSoldLicensesByAlbumId(int albumId);
 }

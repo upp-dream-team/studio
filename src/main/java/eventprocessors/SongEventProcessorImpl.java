@@ -155,7 +155,8 @@ public class SongEventProcessorImpl implements SongEventProcessor {
 
 							mainPanel.removeAll();
 							JPanel searchAndCreatePanel = buildSearchAndCreatePanel(searchAndCreatePanelPreferredSize);
-							JPanel songListPanel = buildSongList(listPanelPreferredSize, songsPerPage, 0, null);
+							JPanel songListPanel = buildSongList(listPanelPreferredSize, songsPerPage, (currentPage - 1) * songsPerPage,
+									currentFilterQuery);
 							JPanel paginationBarPanel = buildPaginationPanel(paginationPanelPreferredSize);
 
 							mainPanel.add(searchAndCreatePanel, BorderLayout.NORTH);
@@ -217,13 +218,13 @@ public class SongEventProcessorImpl implements SongEventProcessor {
 		return searchPanel;
 	}
 
-	private JPanel buildSongList(Dimension preferredSize, int limit, int start, String query) {
+	private JPanel buildSongList(Dimension preferredSize, int limit, int offset, String query) {
 		JPanel res = new JPanel(new BorderLayout());
 		res.setBackground(Color.BLUE);
 		res.setPreferredSize(preferredSize);
 		rowHeight = mainPanel.getPreferredSize().height / 20;
 
-		List<Song> songs = songService.get(start, start + limit, query);
+		List<Song> songs = songService.get(limit, offset,query);
 		JTable recordTable = buildRecordTable(songs, preferredSize);
 
 		res.add(recordTable.getTableHeader(), BorderLayout.NORTH);
@@ -283,7 +284,10 @@ public class SongEventProcessorImpl implements SongEventProcessor {
 			} else {
 				data[3] = " - ";
 			}
-			data[4] = s.getMusicians().toString();
+			if(s.getMusicians() != null)
+				data[4] = s.getMusicians().toString();
+			else
+				data[4] = "";
 			data[5] = buildEditButton(s);
 			data[6] = buildDeleteButton(s);
 			model.insertRow(i, data);
@@ -363,7 +367,7 @@ public class SongEventProcessorImpl implements SongEventProcessor {
 
 							mainPanel.removeAll();
 							JPanel searchAndCreatePanel = buildSearchAndCreatePanel(searchAndCreatePanelPreferredSize);
-							JPanel songListPanel = buildSongList(listPanelPreferredSize, songsPerPage, 0, null);
+							JPanel songListPanel = buildSongList(listPanelPreferredSize, 0, songsPerPage, null);
 							JPanel paginationBarPanel = buildPaginationPanel(paginationPanelPreferredSize);
 
 							mainPanel.add(searchAndCreatePanel, BorderLayout.NORTH);

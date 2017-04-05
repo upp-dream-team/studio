@@ -63,5 +63,10 @@ public class RecordServiceImpl implements RecordService{
 		}
 		return total;
 	}
+	
+	public int getNumOfSoldRecordsByAlbumId(int albumId) 
+	{
+		return recordDao.getNumOfSoldRecordsByAlbumId(albumId);
+	}
 
 }

@@ -59,4 +59,8 @@ public class LicenseServiseImpl implements LicenseService{
 		return total;
 	}
 
+	public int getNumOfSoldLicensesByAlbumId(int albumId) 
+	{
+		return licenseDao.getNumOfSoldLicensesByAlbumId(albumId);
+	}
 }

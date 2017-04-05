@@ -15,5 +15,5 @@ public interface LicenseService {
 	public Date getDateOfTheOldestLicense();
 	public Date getDateOfTheNewestLicense();
 	public Double getTotal(String query, Date dateFrom, Date dateTo);
-
+	public int getNumOfSoldLicensesByAlbumId(int albumId);
 }
