@@ -1,7 +1,12 @@
 package services;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import dao.MusicianDao;
+import dao.RozpodilDao;
+import models.Musician;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,13 +24,20 @@ public class SongServiceImpl implements SongService{
 	private AlbumDao albumDao;
 
 	@Autowired
+    private RozpodilDao rozpodilDao;
 
+	@Autowired
+    private MusicianDao musicianDao;
 	
 	public List<Song> get(int start, int end, String filterQuery) {
 		List<Song> songs= songDao.get(end-start, start, filterQuery);
 		for (Song s : songs){
 			if (s.getAlbumFk() != null && s.getAlbumFk() != 0)
 				s.setAlbum(albumDao.getById(s.getAlbumFk()));
+			List<Musician> musicians = new ArrayList<Musician>();
+			for(int m : rozpodilDao.getMusiciansBySong(s.getId()))
+			    musicians.add(musicianDao.getById(m));
+			s.setMusicians(musicians);
 		}
 		return songs;
 	}

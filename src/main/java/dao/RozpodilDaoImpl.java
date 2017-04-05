@@ -14,9 +14,8 @@ public class RozpodilDaoImpl implements RozpodilDao {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public List<Integer> getMusiciansBySong(int SongId) {
+    public List<Integer> getMusiciansBySong(int songId) {
         String SQL = "SELECT musician_id FROM rozpodil WHERE song_id = ? ";
-        //List<Integer> ids = jdbcTemplate.query(SQL, SongId);
-        return null;
+        return jdbcTemplate.queryForList(SQL, new Object []{songId}, Integer.class);
     }
 }
