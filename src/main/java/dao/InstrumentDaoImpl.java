@@ -1,15 +1,19 @@
 package dao;
 
 import models.Instrument;
+import models.Musician;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 import rowmappers.InstrumentRowMapper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by xoma0_000 on 05.04.2017.
  */
+@Component
 public class InstrumentDaoImpl implements InstrumentDao{
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -27,9 +31,9 @@ public class InstrumentDaoImpl implements InstrumentDao{
         }
     }
 
-    public List<Instrument> get(int id) {
-        String SQL = "SELECT * FROM instrument WHERE instrument.id LIKE ?";
-        return jdbcTemplate.query(SQL, new InstrumentRowMapper(), id);
+    public Instrument get(int id) {
+        String SQL = "SELECT * FROM instrument WHERE instrument.id = ?";
+        return jdbcTemplate.queryForObject(SQL, new InstrumentRowMapper(), id);
     }
 
     public void add(Instrument instrument) {
@@ -56,5 +60,14 @@ public class InstrumentDaoImpl implements InstrumentDao{
             String SQL = "SELECT COUNT(*) FROM instrument";
             return jdbcTemplate.queryForObject(SQL, Integer.class);
         }
+    }
+
+    public List<Instrument> getInstrumentsByMusician(Musician musician) {
+        String SQL = "SELECT instrument_id  FROM musician_instrument WHERE musician_id = ?";
+        List<Integer> list = jdbcTemplate.queryForList(SQL, new Object[]{musician.getId()}, Integer.class);
+        List<Instrument> instruments = new ArrayList<Instrument>();
+        for(int i: list)
+            instruments.add(get(i));
+        return instruments;
     }
 }
