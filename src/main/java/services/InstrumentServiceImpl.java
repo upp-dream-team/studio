@@ -8,17 +8,14 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-/**
- * Created by xoma0_000 on 05.04.2017.
- */
 @Component
-public class InstrumentServiceImpl implements InstrumentService{
+public class InstrumentServiceImpl implements InstrumentService {
 
     @Autowired
     private InstrumentDao instrumentDao;
 
     public List<Instrument> get(int start, int end, String filterQuery) {
-        return instrumentDao.get(end-start, start, filterQuery);
+        return instrumentDao.get(end - start, start, filterQuery);
     }
 
     public Instrument get(int id) {
