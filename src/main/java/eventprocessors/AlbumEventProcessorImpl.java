@@ -21,6 +21,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -33,11 +34,14 @@ import javax.swing.table.TableCellRenderer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import dao.RozpodilDao;
 import eventprocessorhelpers.JTableButtonMouseListener;
 import eventprocessorhelpers.JTableButtonRenderer;
 import eventprocessorhelpers.SwingUtils;
 import models.Album;
 import models.Musician;
+import models.Rozpodil;
 import models.Song;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
@@ -60,10 +64,15 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 	@Autowired
 	private LicenseService licenseService;
 	@Autowired
+	private RozpodilDao rozpodilDao;
+	@Autowired
 	private SongService songService;
 	private JPanel mainPanel;
-	private JPanel songListPanel;
-	private JPanel onlyAlbumSongs;
+	private JPanel allSongListPanel;
+	private JPanel albumSongsPanel;
+	private JPanel upperAlbumSongsSubPanel;
+	private JPanel lowerAlbumSongsSubPanel;
+	private ButtonsBuilder btns;
 	private String currentFilterQuery;
 	private int currentPage;
 	private int albumsPerPage = 10;
@@ -74,6 +83,7 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 	private List<Song> songsToAddToAlbum; 
 
 	public JPanel process(Dimension sizeOfParentElement) {
+		btns = new ButtonsBuilder();
 		currentPage = 1;
 		mainPanel = new JPanel();
 		mainPanel.setPreferredSize(sizeOfParentElement);
@@ -136,25 +146,7 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 		
 		List<Album> albums = albumService.get(albumsPerPage, albumsPerPage*(currentPage-1) , currentFilterQuery);
 		
-		DefaultTableModel model = new DefaultTableModel() {
-			@Override
-			public Class<?> getColumnClass(int column) {
-				if (getRowCount() > 0) {
-					Object value = getValueAt(0, column);
-					if (value != null) {
-						return getValueAt(0, column).getClass();
-					}
-				}
-				return super.getColumnClass(column);
-			}
-			
-			@Override
-		    public boolean isCellEditable(int row, int column) {
-		       //all cells false
-		       return false;
-		    }
-		};
-	      
+		DefaultTableModel model = SwingUtils.getDefaultTableModel();
         model.setColumnIdentifiers(new Object[] { "#", "Назва", "К-ть ліцензій" , "К-ть альбомів", "", "" });
         JTable table = new JTable(model);
         table.setCellSelectionEnabled(false);
@@ -283,13 +275,13 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 				inputPanel.add(buildAddSongsButton());
 				inputPanel.add(saveBtn);
 				
-				songListPanel = new JPanel();
-				songListPanel.setBackground(Color.WHITE);
-				songListPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+				allSongListPanel = new JPanel();
+				allSongListPanel.setBackground(Color.WHITE);
+				allSongListPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 				
 				createAlbumFormPanel.add(labelPanel);
 				createAlbumFormPanel.add(inputPanel);
-				createAlbumFormPanel.add(songListPanel);
+				createAlbumFormPanel.add(allSongListPanel);
 				
 				cancelBtn.addActionListener(new ActionListener() {
 					
@@ -422,16 +414,22 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 				formPanel.add(buildAddSongsButton());
 				formPanel.add(saveBtn);
 				formPanel.add(cancelBtn);
-				songListPanel = new JPanel();
-				songListPanel.setBackground(Color.WHITE);
-				songListPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+				allSongListPanel = new JPanel();
+				allSongListPanel.setBackground(Color.WHITE);
+				allSongListPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 				
+				upperAlbumSongsSubPanel = new JPanel();
+				lowerAlbumSongsSubPanel = new JPanel();
 				
-				onlyAlbumSongs = new JPanel();
+				albumSongsPanel = new JPanel();
+				albumSongsPanel.setLayout(new GridLayout(2, 1));
+				albumSongsPanel.add(upperAlbumSongsSubPanel);
+				albumSongsPanel.add(lowerAlbumSongsSubPanel);
+				
 				
 				createAlbumFormPanel.add(formPanel);
-				createAlbumFormPanel.add(songListPanel);
-				createAlbumFormPanel.add(onlyAlbumSongs);
+				createAlbumFormPanel.add(allSongListPanel);
+				createAlbumFormPanel.add(albumSongsPanel);
 				
 				cancelBtn.addActionListener(new ActionListener() {
 					
@@ -510,37 +508,20 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 			public void actionPerformed(ActionEvent e) {
 				btn.setEnabled(false);
 				List<Song> songs = songService.get(50, 0, null);
-				DefaultTableModel model = new DefaultTableModel() {
-					@Override
-					public Class<?> getColumnClass(int column) {
-						if (getRowCount() > 0) {
-							Object value = getValueAt(0, column);
-							if (value != null) {
-								return getValueAt(0, column).getClass();
-							}
-						}
-						return super.getColumnClass(column);
-					}
-					
-					@Override
-				    public boolean isCellEditable(int row, int column) {
-				       //all cells false
-				       return false;
-				    }
-				};
+				DefaultTableModel model = SwingUtils.getDefaultTableModel();
 		        model.setColumnIdentifiers(new Object[] { "Назва пісні", "",});
 		        JTable table = new JTable(model);
 		        table.setCellSelectionEnabled(false);
 		        table.setRowSelectionAllowed(false);
-		        table.getColumnModel().getColumn(0).setPreferredWidth(8*(songListPanel.getSize().width-60)/10);
-		        table.getColumnModel().getColumn(1).setPreferredWidth(2*(songListPanel.getSize().width-60)/10);
+		        table.getColumnModel().getColumn(0).setPreferredWidth(8*(allSongListPanel.getSize().width-60)/10);
+		        table.getColumnModel().getColumn(1).setPreferredWidth(2*(allSongListPanel.getSize().width-60)/10);
 		        
 		        TableCellRenderer buttonRenderer = new JTableButtonRenderer();
 		        table.getColumnModel().getColumn(1).setCellRenderer(buttonRenderer);
 		        if(songs.size() == 0) {
 		        	model.insertRow(0, new Object[]{"Немає пісень" , null });
 		        } else {
-		        	rowHeight = songListPanel.getSize().height/22;
+		        	rowHeight = allSongListPanel.getSize().height/22;
 		        	for (int i = 0; i < songs.size(); ++i){
 		        		String btnText = "+";
 		        		
@@ -569,15 +550,15 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 		        auxPanel.add(table);
 		        */
 		        
-		        songListPanel.setLayout(new GridLayout());
+		        allSongListPanel.setLayout(new GridLayout());
 		        
 		        JScrollPane sp = new JScrollPane(table);
 		        //sp.getViewport().setPreferredSize(auxPanel.getPreferredSize());
 		        sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		        
-		        songListPanel.add(sp);
-		        songListPanel.revalidate();
-		        songListPanel.repaint();
+		        allSongListPanel.add(sp);
+		        allSongListPanel.revalidate();
+		        allSongListPanel.repaint();
 		        mainPanel.setBackground(Color.WHITE);
 		        mainPanel.revalidate();
 		        mainPanel.repaint();
@@ -601,44 +582,27 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 					btn.removeAll();
 					btn.setText("-");
 				}
-				songListPanel.revalidate();
-				songListPanel.repaint();
-				repaintOnlyAlbumSongsPanel();
+				allSongListPanel.revalidate();
+				allSongListPanel.repaint();
+				repaintUpperAlbumSongsSubPanel();
 			}
 		});
 		
 		return btn;
 	}
 	
-	private void repaintOnlyAlbumSongsPanel()
+	private void repaintUpperAlbumSongsSubPanel()
 	{
-		onlyAlbumSongs.removeAll();
+		upperAlbumSongsSubPanel.removeAll();
 
-		DefaultTableModel model = new DefaultTableModel() {
-			@Override
-			public Class<?> getColumnClass(int column) {
-				if (getRowCount() > 0) {
-					Object value = getValueAt(0, column);
-					if (value != null) {
-						return getValueAt(0, column).getClass();
-					}
-				}
-				return super.getColumnClass(column);
-			}
-			
-			@Override
-		    public boolean isCellEditable(int row, int column) {
-		       //all cells false
-		       return false;
-		    }
-		};
-        model.setColumnIdentifiers(new Object[] { "Пісні", "%", ""});
+		DefaultTableModel model = SwingUtils.getDefaultTableModel();
+        model.setColumnIdentifiers(new Object[] { "Пісні  в Альбомі", "%", ""});
         JTable table = new JTable(model);
         table.setCellSelectionEnabled(false);
         table.setRowSelectionAllowed(false);
-        table.getColumnModel().getColumn(0).setPreferredWidth(10*(onlyAlbumSongs.getSize().width-80)/12);
-        table.getColumnModel().getColumn(1).setPreferredWidth(1*(onlyAlbumSongs.getSize().width-80)/12);
-        table.getColumnModel().getColumn(2).setPreferredWidth(1*(onlyAlbumSongs.getSize().width-80)/12);
+        table.getColumnModel().getColumn(0).setPreferredWidth(10*(upperAlbumSongsSubPanel.getSize().width-80)/12);
+        table.getColumnModel().getColumn(1).setPreferredWidth(1*(upperAlbumSongsSubPanel.getSize().width-80)/12);
+        table.getColumnModel().getColumn(2).setPreferredWidth(1*(upperAlbumSongsSubPanel.getSize().width-80)/12);
         
         TableCellRenderer buttonRenderer = new JTableButtonRenderer();
         table.getColumnModel().getColumn(2).setCellRenderer(buttonRenderer);
@@ -646,8 +610,10 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
         	model.insertRow(0, new Object[]{"Ще немає пісень в альбомі" , null, null });
         } else {
         	for(int i = 0; i < songsToAddToAlbum.size(); ++i ) {
-	        	rowHeight = onlyAlbumSongs.getSize().height/22;
-	            model.insertRow(i, new Object[]{ songsToAddToAlbum.get(i).getTitle() , 0, buildChangeRozpodilButton(songsToAddToAlbum.get(i).getId())});
+	        	rowHeight = upperAlbumSongsSubPanel.getSize().height/11;
+	            model.insertRow(i, new Object[]{ songsToAddToAlbum.get(i).getTitle() , 
+	            		rozpodilDao.getRozpodilForSong(songsToAddToAlbum.get(i).getId()), 
+	            		buildChangeRozpodilButton(songsToAddToAlbum.get(i).getId(), songsToAddToAlbum.get(i).getTitle())});
 	            table.setRowHeight(i, rowHeight);
         	}
         }
@@ -655,15 +621,15 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
         table.getTableHeader().setSize(table.getSize().width, 20);
         table.getTableHeader().setBackground(Color.WHITE);
 
-        onlyAlbumSongs.setLayout(new GridLayout());
+        upperAlbumSongsSubPanel.setLayout(new GridLayout());
         JScrollPane sp = new JScrollPane(table);
         sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        onlyAlbumSongs.add(sp);
-		onlyAlbumSongs.revalidate();
-		onlyAlbumSongs.repaint();
+        upperAlbumSongsSubPanel.add(sp);
+        upperAlbumSongsSubPanel.revalidate();
+        upperAlbumSongsSubPanel.repaint();
 	}
 	
-	private JButton buildChangeRozpodilButton(final int songId) {
+	private JButton buildChangeRozpodilButton(final int songId, final String songTitle) {
 		Icon editIcon = SwingUtils.createImageIcon("/icons/details.png","Edit Rozpodil");
 		JButton editBtn = new JButton(editIcon);
 		editBtn.setSize(editIcon.getIconWidth(), editIcon.getIconHeight()+10);
@@ -672,10 +638,127 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 		editBtn.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
-				
+				repaintLowerAlbumSongsSubPanel(songId, songTitle);
 			}	
 		});
 		return editBtn;
+	}
+	
+	private void repaintLowerAlbumSongsSubPanel(int songId, String songTitle) {
+		lowerAlbumSongsSubPanel.removeAll();
+		
+		DefaultTableModel model = SwingUtils.getDefaultTableModel();
+        model.setColumnIdentifiers(new Object[] { songTitle, "%", "", ""});
+        JTable table = new JTable(model);
+        table.setCellSelectionEnabled(false);
+        table.setRowSelectionAllowed(false);
+        table.getColumnModel().getColumn(0).setPreferredWidth(9*(albumSongsPanel.getSize().width*2-80)/12);
+        table.getColumnModel().getColumn(1).setPreferredWidth(1*(albumSongsPanel.getSize().width*2-80)/12);
+        table.getColumnModel().getColumn(2).setPreferredWidth(1*(albumSongsPanel.getSize().width*2-80)/12);
+        table.getColumnModel().getColumn(3).setPreferredWidth(1*(albumSongsPanel.getSize().width*2-80)/12);
+        
+        TableCellRenderer buttonRenderer = new JTableButtonRenderer();
+        table.getColumnModel().getColumn(2).setCellRenderer(buttonRenderer);
+        table.getColumnModel().getColumn(3).setCellRenderer(buttonRenderer);
+        List<Rozpodil> rozp = rozpodilDao.getRozpodilsBySongIdIncludingMusician(songId);
+        List<String> musicianNames = musicianService.getMuscianNames();
+        if(rozp.size() == 0) {
+        	model.insertRow(0, new Object[]{"Ще немає виконавців" , null, null, null });
+        } else {
+        	for(int i = 0; i < rozp.size(); ++i ) {
+	        	rowHeight = albumSongsPanel.getSize().height/22;
+	            model.insertRow(i, new Object[]{ rozp.get(i).getMusician().getName(), 
+	            		rozp.get(i).getChastka(), 
+	            		buildEditRozpodilBtn(rozp.get(i).getSongId(), rozp.get(i).getMusicianId(), songTitle),
+	            		buildDeleteRozpodilBtn(rozp.get(i).getSongId(), rozp.get(i).getMusicianId(), songTitle)});
+	            table.setRowHeight(i, rowHeight);
+	            musicianNames.remove(rozp.get(i).getMusician().getName());
+        	}
+        }
+        
+        table.addMouseListener(new JTableButtonMouseListener(table,rowHeight));
+        table.getTableHeader().setSize(table.getSize().width, 20);
+        table.getTableHeader().setBackground(Color.WHITE);
+        
+        lowerAlbumSongsSubPanel.setLayout(new BorderLayout() );
+        JScrollPane sp = new JScrollPane(table);
+        sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        lowerAlbumSongsSubPanel.add(sp, BorderLayout.CENTER);
+        
+        JPanel musicianPanel = new JPanel();
+        musicianPanel.setLayout(new GridLayout(2,1));
+        
+        JComboBox musicianList = new JComboBox(musicianNames.toArray());
+        musicianPanel.add(musicianList);
+        musicianPanel.add(buildAddMusicianBtn(songId, songTitle, musicianList));
+        
+        musicianPanel.setBorder(new EmptyBorder(10, 0, 10, 0 ));
+        
+        lowerAlbumSongsSubPanel.add(musicianPanel, BorderLayout.NORTH);
+        lowerAlbumSongsSubPanel.revalidate();
+        lowerAlbumSongsSubPanel.repaint();
+	}
+	
+	private JButton buildDeleteRozpodilBtn(final int songId, final int musicianId, final String songTitle) {
+		Icon deleteIcon = SwingUtils.createImageIcon("/icons/delete-small.png","Delete");
+		JButton btn = new JButton(deleteIcon);
+		btn.setBackground(Color.WHITE);
+		btn.setBorderPainted(false);
+		btn.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				rozpodilDao.delete(musicianId, songId);
+				repaintLowerAlbumSongsSubPanel(songId, songTitle);
+				repaintUpperAlbumSongsSubPanel();
+			}
+		});
+		
+		return btn;
+	}
+	
+	private JButton buildEditRozpodilBtn(final int songId, final int musicianId, final String songTitle) {
+		Icon icon = SwingUtils.createImageIcon("/icons/edit-small.jpg","Edit");
+		JButton btn = new JButton(icon);
+		btn.setBackground(Color.WHITE);
+		btn.setBorderPainted(false);
+		btn.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				
+				String input = JOptionPane.showInputDialog ( "Нова частка від винагородження:" ); 
+				double chastka = Double.valueOf(input);
+				Rozpodil r = new Rozpodil();
+				r.setSongId(songId);
+				r.setMusicianId(musicianId);
+				r.setChastka(chastka);
+				rozpodilDao.update(r);
+				
+				repaintLowerAlbumSongsSubPanel(songId, songTitle); 
+				repaintUpperAlbumSongsSubPanel();
+			}
+		});
+		
+		return btn;
+	}
+
+	private JButton buildAddMusicianBtn(final int songId, final String songTitle, final JComboBox musicianList) {
+		JButton btn = new JButton("Додати виконавця");
+		
+		btn.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				String name = (String)musicianList.getSelectedItem();
+				int musicianId = musicianService.getByName(name).getId();
+				Rozpodil r = new Rozpodil();
+				r.setSongId(songId);
+				r.setMusicianId(musicianId);
+				rozpodilDao.insert(r);
+				repaintUpperAlbumSongsSubPanel();
+				repaintLowerAlbumSongsSubPanel(songId, songTitle);
+			}
+		});
+		
+		return btn;
 	}
 
 	private JPanel buildSearchPanel(Dimension preferredSize) {

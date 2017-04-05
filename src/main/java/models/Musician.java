@@ -8,6 +8,7 @@ public class Musician {
 	private String name;
 	private String phone;
 	private List<Instrument> instruments;
+
 	public int getId() {
 		return id;
 	}

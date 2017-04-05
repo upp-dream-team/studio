@@ -8,6 +8,7 @@ import java.awt.event.FocusListener;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 
 import eventprocessors.MusicianEventProcessorImpl;
 
@@ -52,5 +53,27 @@ public class SwingUtils {
 		JLabel res = new JLabel(string);
 		res.setFont(font);
 		return res;
+	}
+	
+	public static DefaultTableModel  getDefaultTableModel()
+	{
+		return new DefaultTableModel() {
+			@Override
+			public Class<?> getColumnClass(int column) {
+				if (getRowCount() > 0) {
+					Object value = getValueAt(0, column);
+					if (value != null) {
+						return getValueAt(0, column).getClass();
+					}
+				}
+				return super.getColumnClass(column);
+			}
+			
+			@Override
+		    public boolean isCellEditable(int row, int column) {
+		       //all cells false
+		       return false;
+		    }
+		};
 	}
 }

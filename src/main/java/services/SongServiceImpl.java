@@ -20,7 +20,6 @@ public class SongServiceImpl implements SongService{
 	private AlbumDao albumDao;
 	@Autowired
 	private MusicianDao musicianDao;
-
 	
 	public List<Song> get(int limit, int offset, String filterQuery) {
 		List<Song> songs = songDao.get(limit, offset, filterQuery);
