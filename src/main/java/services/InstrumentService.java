@@ -1,19 +1,16 @@
 package services;
 
 import models.Instrument;
+import models.Musician;
 
 import java.util.List;
 
 public interface InstrumentService {
-    public List<Instrument> get(int limit, int offset, String filterQuery);
-
-    public List<Instrument> get(int id);
-
-    public void add(Instrument instrument);
-
-    public int delete(int id);
-
-    public void update(Instrument instrument);
-
-    public int getNumOfInstruments(String currentFilterQuery);
+    List<Instrument> getInstrumentsByMusician(Musician musician);
+    Instrument get(int id);
+    List<Instrument> get(int limit, int offset, String filterQuery);
+    void add(Instrument instrument);
+    int delete(int id);
+    void update(Instrument instrument);
+    int getNumOfInstruments(String currentFilterQuery);
 }

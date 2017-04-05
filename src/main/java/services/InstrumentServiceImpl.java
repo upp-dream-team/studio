@@ -2,6 +2,7 @@ package services;
 
 import dao.InstrumentDao;
 import models.Instrument;
+import models.Musician;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +18,7 @@ public class InstrumentServiceImpl implements InstrumentService {
         return instrumentDao.get(end - start, start, filterQuery);
     }
 
-    public List<Instrument> get(int id) {
+    public Instrument get(int id) {
         return instrumentDao.get(id);
     }
 
@@ -36,5 +37,9 @@ public class InstrumentServiceImpl implements InstrumentService {
 
     public int getNumOfInstruments(String currentFilterQuery) {
         return instrumentDao.getNumOfInstruments(currentFilterQuery);
+    }
+
+    public List<Instrument> getInstrumentsByMusician(Musician musician) {
+        return instrumentDao.getInstrumentsByMusician(musician);
     }
 }

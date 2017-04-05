@@ -2,6 +2,8 @@
 package dao;
 
 import java.util.List;
+
+import models.Musician;
 import models.Song;
 
 public interface SongDao {
@@ -12,5 +14,7 @@ public interface SongDao {
 	public int delete(int id);
 	public int update(Song s);
 	public int getNumOfSongs(String filterQuery);
+	void addMusician(Musician musician, Song song);
+    void deleteMusician(Musician musician, Song song);
 
 }

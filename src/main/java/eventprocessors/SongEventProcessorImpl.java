@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
@@ -16,7 +17,9 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 
 import models.Album;
+import models.Musician;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 
 import eventprocessorhelpers.JTableButtonMouseListener;
@@ -24,6 +27,7 @@ import eventprocessorhelpers.JTableButtonRenderer;
 import eventprocessorhelpers.SwingUtils;
 import models.Song;
 import services.AlbumService;
+import services.MusicianService;
 import services.SongService;
 
 @Component
@@ -33,6 +37,8 @@ public class SongEventProcessorImpl implements SongEventProcessor {
     private SongService songService;
     @Autowired
     private AlbumService albumService;
+    @Autowired
+    private MusicianService musicianService;
 
     private JPanel mainPanel;
     private String currentFilterQuery;
@@ -262,13 +268,13 @@ public class SongEventProcessorImpl implements SongEventProcessor {
         columnModel.getColumn(5).setCellRenderer(buttonRenderer);
         columnModel.getColumn(6).setCellRenderer(buttonRenderer);
 
-        columnModel.getColumn(0).setPreferredWidth(preferredSize.width / 11);
-        columnModel.getColumn(1).setPreferredWidth(2 * preferredSize.width / 11);
-        columnModel.getColumn(2).setPreferredWidth(2 * preferredSize.width / 11);
-        columnModel.getColumn(3).setPreferredWidth(2 * preferredSize.width / 11);
-        columnModel.getColumn(4).setPreferredWidth(2 * preferredSize.width / 11);
-        columnModel.getColumn(5).setPreferredWidth(preferredSize.width / 11);
-        columnModel.getColumn(6).setPreferredWidth(preferredSize.width / 11);
+        columnModel.getColumn(0).setPreferredWidth(preferredSize.width / 22);
+        columnModel.getColumn(1).setPreferredWidth(4 * preferredSize.width / 22);
+        columnModel.getColumn(2).setPreferredWidth(4 * preferredSize.width / 22);
+        columnModel.getColumn(3).setPreferredWidth(3 * preferredSize.width / 22);
+        columnModel.getColumn(4).setPreferredWidth(8 * preferredSize.width / 22);
+        columnModel.getColumn(5).setPreferredWidth(preferredSize.width / 22);
+        columnModel.getColumn(6).setPreferredWidth(preferredSize.width / 22);
 
         table.setRowHeight(rowHeight);
 
@@ -299,7 +305,7 @@ public class SongEventProcessorImpl implements SongEventProcessor {
 
     private JButton buildEditButton(final Song s) {
         Icon editIcon = SwingUtils.createImageIcon("/icons/edit.png", "Edit");
-        JButton b = new JButton(editIcon);
+        final JButton b = new JButton(editIcon);
         b.setBackground(Color.WHITE);
         b.setBorderPainted(false);
 
@@ -309,24 +315,90 @@ public class SongEventProcessorImpl implements SongEventProcessor {
                 BorderLayout layout = (BorderLayout) mainPanel.getLayout();
                 mainPanel.remove(layout.getLayoutComponent(BorderLayout.NORTH));
 
-                JPanel editFormPanel = new JPanel();
+                final JPanel editFormPanel = new JPanel();
                 editFormPanel.setBorder(new EmptyBorder(10, 10, 30, 10));
                 editFormPanel.setSize(searchAndCreatePanelPreferredSize);
-                editFormPanel.setLayout(new GridLayout(4, 2));
+                editFormPanel.setLayout(new GridLayout(6, 2));
 
                 JLabel titleL = new JLabel("Title");
                 JLabel authorL = new JLabel("Author");
                 JLabel albumL = new JLabel("Album");
+                JLabel musicianL = new JLabel("Add musician");
 
                 final JTextField titleInput = new JTextField(40);
                 titleInput.setText(s.getTitle());
                 final JTextField authorInput = new JTextField(40);
                 authorInput.setText(s.getAuthor());
                 final JComboBox<String> albumJComboBox = new JComboBox<String>(albumService.getAlbumTitles().toArray(new String[albumService.getAlbumTitles().size()]));
+                final List<String> musicians = new ArrayList<String>();
+                for (Musician musician : s.getMusicians())
+                    musicians.add(musician.getName());
+                List<String> names = musicianService.getMuscianNames();
+                names.removeAll(musicians);
+                final JComboBox<String> musicianJComboBox = new JComboBox<String>(names.toArray(new String[names.size()]));
                 albumJComboBox.setSelectedItem(s.getAlbum().getTitle());
-
-                JButton cancelBtn = new JButton("Cancel");
+                final JButton cancelBtn = new JButton("Cancel");
                 JButton saveBtn = new JButton("Save");
+                final JButton addMusician = new JButton("I want to add musician");
+                final JButton cancelMusician = new JButton("I want to delete musician");
+                final JButton sureCancel = new JButton("Ok, delete!");
+
+                addMusician.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        String musician = musicianJComboBox.getSelectedItem().toString();
+                        try {
+                            songService.addMusician(musician, s);
+                            mainPanel.removeAll();
+                            JPanel searchAndCreatePanel = buildSearchAndCreatePanel(searchAndCreatePanelPreferredSize);
+                            JPanel songListPanel = buildSongList(listPanelPreferredSize, songsPerPage, 0, null);
+                            JPanel paginationBarPanel = buildPaginationPanel(paginationPanelPreferredSize);
+
+                            mainPanel.add(searchAndCreatePanel, BorderLayout.NORTH);
+                            mainPanel.add(songListPanel, BorderLayout.CENTER);
+                            mainPanel.add(paginationBarPanel, BorderLayout.SOUTH);
+
+                            mainPanel.revalidate();
+                            mainPanel.repaint();
+                            b.doClick();
+                        } catch (DuplicateKeyException ex) {
+                            JOptionPane.showMessageDialog(null, "You have already added this musician!");
+                        }
+                    }
+                });
+
+                cancelMusician.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        musicianJComboBox.removeAllItems();
+                        for(Musician musician: s.getMusicians())
+                            musicianJComboBox.addItem(musician.getName());
+                        editFormPanel.remove(cancelMusician);
+                        editFormPanel.add(sureCancel);
+                        JOptionPane.showMessageDialog(null, "Now you can delete musicians");
+                        mainPanel.revalidate();
+                        mainPanel.repaint();
+                    }
+                });
+
+                sureCancel.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        songService.deleteMusician(musicianJComboBox.getSelectedItem().toString(), s);
+                        musicianJComboBox.removeAllItems();
+                        for(Musician musician: s.getMusicians())
+                            musicianJComboBox.addItem(musician.getName());
+                        mainPanel.removeAll();
+                        JPanel searchAndCreatePanel = buildSearchAndCreatePanel(searchAndCreatePanelPreferredSize);
+                        JPanel songListPanel = buildSongList(listPanelPreferredSize, songsPerPage, 0, null);
+                        JPanel paginationBarPanel = buildPaginationPanel(paginationPanelPreferredSize);
+
+                        mainPanel.add(searchAndCreatePanel, BorderLayout.NORTH);
+                        mainPanel.add(songListPanel, BorderLayout.CENTER);
+                        mainPanel.add(paginationBarPanel, BorderLayout.SOUTH);
+
+                        mainPanel.revalidate();
+                        mainPanel.repaint();
+                        b.doClick();
+                    }
+                });
 
                 cancelBtn.addActionListener(new ActionListener() {
 
@@ -385,8 +457,12 @@ public class SongEventProcessorImpl implements SongEventProcessor {
                 editFormPanel.add(authorInput);
                 editFormPanel.add(albumL);
                 editFormPanel.add(albumJComboBox);
+                editFormPanel.add(musicianL);
+                editFormPanel.add(musicianJComboBox);
                 editFormPanel.add(cancelBtn);
                 editFormPanel.add(saveBtn);
+                editFormPanel.add(addMusician);
+                editFormPanel.add(cancelMusician);
 
                 mainPanel.add(editFormPanel, BorderLayout.NORTH);
                 mainPanel.revalidate();
