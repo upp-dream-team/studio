@@ -1,6 +1,8 @@
 package services;
 
 import java.util.List;
+
+import models.Musician;
 import models.Song;
 
 public interface SongService {
@@ -11,4 +13,6 @@ public interface SongService {
 	public int delete(int id);
 	public void update(Song s);
 	public int getNumOfSongs(String currentFilterQuery);
+	void addMusician(String musicianName, Song song);
+	void deleteMusician(String musicianName, Song song);
 }

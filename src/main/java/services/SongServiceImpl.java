@@ -1,8 +1,12 @@
 package services;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import dao.MusicianDao;
+import dao.RozpodilDao;
+import models.Musician;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,14 +24,18 @@ public class SongServiceImpl implements SongService{
 	private AlbumDao albumDao;
 	@Autowired
 	private MusicianDao musicianDao;
+	@Autowired
+	private RozpodilDao rozpodilDao;
 	
-	public List<Song> get(int limit, int offset, String filterQuery) {
-		List<Song> songs = songDao.get(limit, offset, filterQuery);
-		if(songs != null) {
-			for(Song s : songs) {
-				if(s.getAlbumFk() != null)
-					s.setAlbum(albumDao.getById(s.getAlbumFk()));
-			}
+	public List<Song> get(int start, int end, String filterQuery) {
+		List<Song> songs= songDao.get(end-start, start, filterQuery);
+		for (Song s : songs){
+			if (s.getAlbumFk() != null && s.getAlbumFk() != 0)
+				s.setAlbum(albumDao.getById(s.getAlbumFk()));
+			List<Musician> musicians = new ArrayList<Musician>();
+			for(int m : rozpodilDao.getMusiciansBySong(s.getId()))
+			    musicians.add(musicianDao.getById(m));
+			s.setMusicians(musicians);
 		}
 		return songs;
 	}
@@ -52,5 +60,13 @@ public class SongServiceImpl implements SongService{
 	public int getNumOfSongs(String currentFilterQuery) {
 		return songDao.getNumOfSongs(currentFilterQuery);
 	}
+
+    public void addMusician(String musicianName, Song song) {
+        songDao.addMusician(musicianDao.getByName(musicianName), song);
+    }
+
+    public void deleteMusician(String musicianName, Song song) {
+        songDao.deleteMusician(musicianDao.getByName(musicianName), song);
+    }
 
 }

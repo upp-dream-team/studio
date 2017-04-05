@@ -36,8 +36,6 @@ public class Musician {
 
 	@Override
 	public String toString() {
-		return "Musician{" +
-				"name='" + name + '\'' +
-				'}';
+		return  name;
 	}
 }

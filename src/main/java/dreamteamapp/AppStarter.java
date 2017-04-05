@@ -34,6 +34,9 @@ public class AppStarter {
 	@Autowired
 	private FinancialAffairsEventProcessor financialAffairsEventProcessor;
 
+	@Autowired
+	private InstrumentEventProcessor instrumentEventProcessor;
+
 	public AppStarter() {
 
 		JFrame frame = new JFrame("Studio");
@@ -109,6 +112,19 @@ public class AppStarter {
 				contentPanel.repaint();
 			}
 			
+		});
+
+		instruments.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				contentPanel.removeAll();
+				JPanel faPanel = instrumentEventProcessor.process(contentPanel.getSize());
+				faPanel.setPreferredSize(contentPanel.getSize());
+				contentPanel.add(faPanel);
+				contentPanel.revalidate();
+				contentPanel.repaint();
+			}
+
 		});
 		
 		container.add(menuPanel, BorderLayout.WEST);

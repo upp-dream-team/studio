@@ -72,7 +72,6 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 	private JPanel albumSongsPanel;
 	private JPanel upperAlbumSongsSubPanel;
 	private JPanel lowerAlbumSongsSubPanel;
-	private ButtonsBuilder btns;
 	private String currentFilterQuery;
 	private int currentPage;
 	private int albumsPerPage = 10;
@@ -83,7 +82,6 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 	private List<Song> songsToAddToAlbum; 
 
 	public JPanel process(Dimension sizeOfParentElement) {
-		btns = new ButtonsBuilder();
 		currentPage = 1;
 		mainPanel = new JPanel();
 		mainPanel.setPreferredSize(sizeOfParentElement);
@@ -507,7 +505,7 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 			
 			public void actionPerformed(ActionEvent e) {
 				btn.setEnabled(false);
-				List<Song> songs = songService.get(50, 0, null);
+				List<Song> songs = songService.get(0, 300, null);
 				DefaultTableModel model = SwingUtils.getDefaultTableModel();
 		        model.setColumnIdentifiers(new Object[] { "Назва пісні", "",});
 		        JTable table = new JTable(model);
