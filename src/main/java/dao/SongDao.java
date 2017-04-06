@@ -16,5 +16,6 @@ public interface SongDao {
 	public int getNumOfSongs(String filterQuery);
 	void addMusician(Musician musician, Song song);
     void deleteMusician(Musician musician, Song song);
+    List<Song> getAllFromAlbumOrWithoutAlbum(int albumId);
 
 }

@@ -27,7 +27,17 @@ public class SongServiceImpl implements SongService{
 	@Autowired
 	private RozpodilDao rozpodilDao;
 	
+	public List<Song> getAllFromAlbumOrWithoutAlbum(int albumId) 
+	{
+		return songDao.getAllFromAlbumOrWithoutAlbum(albumId);
+	}
+	
 	public List<Song> get(int start, int end, String filterQuery) {
+		List<Song> songs= songDao.get(end-start, start, filterQuery);
+		return songs;
+	}
+	
+	public List<Song> getIncludingRelated(int start, int end, String filterQuery) {
 		List<Song> songs= songDao.get(end-start, start, filterQuery);
 		for (Song s : songs){
 			if (s.getAlbumFk() != null && s.getAlbumFk() != 0)

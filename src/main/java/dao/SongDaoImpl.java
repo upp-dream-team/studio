@@ -27,6 +27,12 @@ public class SongDaoImpl implements SongDao {
 			return songs;
 		}
 	}
+	
+	public List<Song> getAllFromAlbumOrWithoutAlbum(int albumId) {
+		String SQL = "SELECT * FROM song WHERE album = ? OR album IS NULL";
+		List <Song> songs = jdbcTemplate.query(SQL, new Object[]{albumId},  new SongRowMapper());
+		return songs;
+	}
 
 	public List<Song> get(String song) {
 		String SQL = "SELECT * FROM song WHERE LOWER(song.title) LIKE ?";

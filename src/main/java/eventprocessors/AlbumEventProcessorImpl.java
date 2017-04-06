@@ -225,61 +225,63 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 				mainPanel.removeAll();
 				
 				JPanel createAlbumFormPanel = new JPanel();
-				createAlbumFormPanel.setBorder(new EmptyBorder(10, 10, 30, 10));
+				createAlbumFormPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
 				createAlbumFormPanel.setSize(searchAndCreatePanelPreferredSize);
 				createAlbumFormPanel.setLayout(new GridLayout(1,3));
 				
-				JButton cancelBtn = new JButton("Cancel");
-				JPanel labelPanel = new JPanel();
-				labelPanel.setBackground(Color.WHITE);
-				labelPanel.setLayout(new GridLayout(15, 1,15,15));
-				labelPanel.add(new JLabel("Title", SwingConstants.RIGHT));
-				labelPanel.add(new JLabel("Record Date",SwingConstants.RIGHT));
-				labelPanel.add(new JLabel("Price", SwingConstants.RIGHT));
-				labelPanel.add(new JLabel("Musician Royalties", SwingConstants.RIGHT));
-				labelPanel.add(new JLabel("Producer", SwingConstants.RIGHT));
-				labelPanel.add(new JLabel("Producer Royalties", SwingConstants.RIGHT));
-				labelPanel.add(new JLabel("", SwingConstants.RIGHT));
-				labelPanel.add(cancelBtn);
-				
-				JButton saveBtn = new JButton("Save");
+				JButton cancelBtn = new JButton("Відмінити");
+				JPanel formPanel = new JPanel();
+				formPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+				JButton saveBtn = new JButton("Зберегти");
 				final JTextField titleInput = new JTextField(40);
+				final JTextField priceInput = new JTextField(40);
+				final JTextField musicianRoyaltiesInput = new JTextField(40);
+				final JTextField producerRoyalriesInput = new JTextField(40);
+				List<String> musicians = musicianService.getMuscianNames();
+				final JComboBox producerList = new JComboBox(musicians.toArray());
+				int indexOfSelectedItem = musicians.indexOf(album.getProducer().getName());
+				producerList.setSelectedIndex(indexOfSelectedItem);
+				formPanel.setBackground(Color.WHITE);
+				formPanel.setLayout(new GridLayout(15, 1,15,15));
+				formPanel.add(new JLabel("Title", SwingConstants.LEFT));
 				titleInput.setText(album.getTitle());
+				formPanel.add(titleInput);
+				formPanel.add(new JLabel("Record Date",SwingConstants.LEFT));
 				UtilDateModel model = new UtilDateModel(album.getRecordDate());
 				model.setSelected(true);
 				final JDatePickerImpl datePicker = new JDatePickerImpl(new JDatePanelImpl(model));
-				final JTextField priceInput = new JTextField(40);
+				formPanel.add(datePicker);
+				formPanel.add(new JLabel("Price", SwingConstants.LEFT));
 				priceInput.setText(album.getPrice()+"");
-				final JTextField musicianRoyaltiesInput = new JTextField(40);
+				formPanel.add(priceInput);
+				formPanel.add(new JLabel("Musician Royalties", SwingConstants.LEFT));
 				musicianRoyaltiesInput.setText(""+album.getMusicianRoyalties());
-				final JTextField producerRoyalriesInput = new JTextField(40);
+				formPanel.add(musicianRoyaltiesInput);
+				formPanel.add(new JLabel("Producer", SwingConstants.LEFT));
+				formPanel.add(producerList);
+				formPanel.add(new JLabel("Producer Royalties", SwingConstants.LEFT));
 				producerRoyalriesInput.setText(""+album.getProducerRoyalties());
-				List<String> musicians = musicianService.getMuscianNames();
-				System.out.println("Producer: " + album.getProducer().getName());
-				int indexOfSelectedItem = musicians.indexOf(album.getProducer().getName());
-				System.out.println("Producer index: " + indexOfSelectedItem);
-				final JComboBox producerList = new JComboBox(musicians.toArray());
-				producerList.setSelectedIndex(indexOfSelectedItem);
-				JPanel inputPanel = new JPanel();
-				inputPanel.setBackground(Color.WHITE);
-				inputPanel.setBorder(new EmptyBorder(0, 50, 0, 30));
-				inputPanel.setLayout(new GridLayout(15, 1,15,15));
-				inputPanel.add(titleInput);
-				inputPanel.add(datePicker);
-				inputPanel.add(priceInput);
-				inputPanel.add(musicianRoyaltiesInput);
-				inputPanel.add(producerList);
-				inputPanel.add(producerRoyalriesInput);
-				inputPanel.add(buildAddSongsButton());
-				inputPanel.add(saveBtn);
+				formPanel.add(producerRoyalriesInput);
+				formPanel.add(buildAddSongsButton(album.getId()));
+				formPanel.add(saveBtn);
+				formPanel.add(cancelBtn);
 				
 				allSongListPanel = new JPanel();
 				allSongListPanel.setBackground(Color.WHITE);
-				allSongListPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+				allSongListPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 				
-				createAlbumFormPanel.add(labelPanel);
-				createAlbumFormPanel.add(inputPanel);
+				upperAlbumSongsSubPanel = new JPanel();
+				lowerAlbumSongsSubPanel = new JPanel();
+				
+				albumSongsPanel = new JPanel();
+				albumSongsPanel.setLayout(new GridLayout(2, 1));
+				albumSongsPanel.add(upperAlbumSongsSubPanel);
+				albumSongsPanel.add(lowerAlbumSongsSubPanel);
+				
+				
+				createAlbumFormPanel.add(formPanel);
 				createAlbumFormPanel.add(allSongListPanel);
+				createAlbumFormPanel.add(albumSongsPanel);
 				
 				cancelBtn.addActionListener(new ActionListener() {
 					
@@ -409,7 +411,7 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 				formPanel.add(producerList);
 				formPanel.add(new JLabel("Producer Royalties", SwingConstants.LEFT));
 				formPanel.add(producerRoyalriesInput);
-				formPanel.add(buildAddSongsButton());
+				formPanel.add(buildAddSongsButton(0));
 				formPanel.add(saveBtn);
 				formPanel.add(cancelBtn);
 				allSongListPanel = new JPanel();
@@ -498,14 +500,14 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 		return createAlbumPanel;
 	}
 	
-	private JButton buildAddSongsButton() {
+	private JButton buildAddSongsButton(final int albumId) {
 		final JButton btn = new JButton("Пісні");
 		
 		btn.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
 				btn.setEnabled(false);
-				List<Song> songs = songService.get(0, 300, null);
+				List<Song> songs = songService.getAllFromAlbumOrWithoutAlbum(albumId);
 				DefaultTableModel model = SwingUtils.getDefaultTableModel();
 		        model.setColumnIdentifiers(new Object[] { "Назва пісні", "",});
 		        JTable table = new JTable(model);
@@ -517,7 +519,7 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 		        TableCellRenderer buttonRenderer = new JTableButtonRenderer();
 		        table.getColumnModel().getColumn(1).setCellRenderer(buttonRenderer);
 		        if(songs.size() == 0) {
-		        	model.insertRow(0, new Object[]{"Немає пісень" , null });
+		        	model.insertRow(0, new Object[]{"Немає пісень, що не належать жодному альбому" , null });
 		        } else {
 		        	rowHeight = allSongListPanel.getSize().height/22;
 		        	for (int i = 0; i < songs.size(); ++i){
@@ -560,6 +562,8 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 		        mainPanel.setBackground(Color.WHITE);
 		        mainPanel.revalidate();
 		        mainPanel.repaint();
+		        
+		        repaintUpperAlbumSongsSubPanel();
 			}
 		});
 		

@@ -229,7 +229,7 @@ public class SongEventProcessorImpl implements SongEventProcessor {
         res.setPreferredSize(preferredSize);
         rowHeight = mainPanel.getPreferredSize().height / 20;
 
-        List<Song> songs = songService.get(start, start + limit, query);
+        List<Song> songs = songService.getIncludingRelated(start, start + limit, query);
         JTable recordTable = buildRecordTable(songs, preferredSize);
 
         res.add(recordTable.getTableHeader(), BorderLayout.NORTH);
