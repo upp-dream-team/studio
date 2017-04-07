@@ -12,6 +12,8 @@ public abstract class Selling {
 	protected Album album;
 	protected int sellingId;
 	
+	protected double incomePerCent;
+
 	protected boolean isLicense;
 	
 	// for records
@@ -67,6 +69,14 @@ public abstract class Selling {
 	
 	public void setSellingId(int sellingId) {
 		this.sellingId = sellingId;
+	}
+	
+	public double getIncomePerCent() {
+		return incomePerCent;
+	}
+
+	public void setIncomePerCent(double incomePerCent) {
+		this.incomePerCent = incomePerCent;
 	}
 	
 	public boolean isLicense() {

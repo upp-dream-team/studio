@@ -22,20 +22,20 @@ public class RecordDaoImpl implements RecordDao {
 
 	public List<Record> get(int limit, int offset, String filterQuery, Date dateFrom, Date dateTo) {
 		if (filterQuery != null && !filterQuery.trim().isEmpty()) {
-			String SQL = "SELECT * FROM record INNER JOIN sellings ON record.selling_id=sellings.id WHERE LOWER(client) LIKE ? AND sell_date BETWEEN ? AND ? ORDER BY sell_date LIMIT ? OFFSET ?";
+			String SQL = "SELECT * FROM (record INNER JOIN sellings ON record.selling_id=sellings.id) INNER JOIN album ON sellings.album_id=album.id WHERE LOWER(client) LIKE ? AND sell_date BETWEEN ? AND ? ORDER BY sell_date LIMIT ? OFFSET ?";
 			String wildcard = "%" + filterQuery.toLowerCase() + "%";
 			List<Record> records = jdbcTemplate.query(SQL, new Object[] { wildcard, dateFrom, dateTo, limit, offset },
 					new RecordRowMapper());
 			return records;
 		} else {
-			String SQL = "SELECT * FROM record INNER JOIN sellings ON record.selling_id=sellings.id WHERE sell_date BETWEEN ? AND ? ORDER BY sell_date LIMIT ? OFFSET ?";
+			String SQL = "SELECT * FROM (record INNER JOIN sellings ON record.selling_id=sellings.id) INNER JOIN album ON sellings.album_id=album.id WHERE sell_date BETWEEN ? AND ? ORDER BY sell_date LIMIT ? OFFSET ?";
 			List<Record> records = jdbcTemplate.query(SQL, new Object[] { dateFrom, dateTo, limit, offset }, new RecordRowMapper());
 			return records;
 		}
 	}
 
 	public Record getById(int id) {
-		String query = "select * from record INNER JOIN sellings ON record.selling_id=sellings.id where record.id = ?";
+		String query = "select * from (record INNER JOIN sellings ON record.selling_id=sellings.id) INNER JOIN album ON sellings.album_id=album.id where record.id = ?";
 		Record record = (Record) jdbcTemplate.queryForObject(query, new Object[] { id }, new RecordRowMapper());
 		return record;
 	}
@@ -91,11 +91,13 @@ public class RecordDaoImpl implements RecordDao {
 
 	public Double getTotal(String filterQuery, Date dateFrom, Date dateTo) {
 		if (filterQuery != null && !filterQuery.trim().isEmpty()) {
-			String SQL = "SELECT SUM(quantity*price) FROM (record INNER JOIN sellings ON record.selling_id=sellings.id) INNER JOIN album ON sellings.album_id=album.id WHERE LOWER(client) LIKE ? AND sell_date BETWEEN ? AND ?";
+			String SQL = "SELECT SUM(quantity*price*(1-(gonorar_percent+chief_part))) "+
+				"FROM (record INNER JOIN sellings ON record.selling_id=sellings.id) INNER JOIN album ON sellings.album_id=album.id WHERE LOWER(client) LIKE ? AND sell_date BETWEEN ? AND ?";
 			String wildcard = "%" + filterQuery.toLowerCase() + "%";
 			return jdbcTemplate.queryForObject(SQL, new Object[] { wildcard, dateFrom, dateTo }, Double.class);
 		} else {
-			String SQL = "SELECT SUM(quantity*price) FROM (record INNER JOIN sellings ON record.selling_id=sellings.id) INNER JOIN album ON sellings.album_id=album.id WHERE sell_date BETWEEN ? AND ?";
+			String SQL = "SELECT SUM(quantity*price*(1-(gonorar_percent+chief_part))) "+
+				"FROM (record INNER JOIN sellings ON record.selling_id=sellings.id) INNER JOIN album ON sellings.album_id=album.id WHERE sell_date BETWEEN ? AND ?";
 			return jdbcTemplate.queryForObject(SQL, new Object[] { dateFrom, dateTo }, Double.class);
 		}
 	}

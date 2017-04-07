@@ -18,20 +18,20 @@ public class LicenseDaoImpl implements LicenseDao {
 
 	public List<License> get(int limit, int offset, String filterQuery, Date dateFrom, Date dateTo) {
 		if (filterQuery != null && !filterQuery.trim().isEmpty()) {
-			String SQL = "SELECT * FROM license INNER JOIN sellings ON license.selling_id=sellings.id WHERE LOWER(client) LIKE ? AND sell_date BETWEEN ? AND ? ORDER BY sell_date LIMIT ? OFFSET ?";
+			String SQL = "SELECT * FROM (license INNER JOIN sellings ON license.selling_id=sellings.id) INNER JOIN album ON sellings.album_id=album.id WHERE LOWER(client) LIKE ? AND sell_date BETWEEN ? AND ? ORDER BY sell_date LIMIT ? OFFSET ?";
 			String wildcard = "%" + filterQuery.toLowerCase() + "%";
 			List<License> records = jdbcTemplate.query(SQL, new Object[] { wildcard, dateFrom, dateTo, limit, offset },
 					new LicenseRowMapper());
 			return records;
 		} else {
-			String SQL = "SELECT * FROM license INNER JOIN sellings ON license.selling_id=sellings.id WHERE sell_date BETWEEN ? AND ? ORDER BY sell_date LIMIT ? OFFSET ?";
+			String SQL = "SELECT * FROM (license INNER JOIN sellings ON license.selling_id=sellings.id) INNER JOIN album ON sellings.album_id=album.id WHERE sell_date BETWEEN ? AND ? ORDER BY sell_date LIMIT ? OFFSET ?";
 			List<License> records = jdbcTemplate.query(SQL, new Object[] { dateFrom, dateTo, limit, offset }, new LicenseRowMapper());
 			return records;
 		}
 	}
 
 	public License getById(int id) {
-		String query = "select * from license INNER JOIN sellings ON license.selling_id=sellings.id where license.id = ?";
+		String query = "select * from (license INNER JOIN sellings ON license.selling_id=sellings.id) INNER JOIN album ON sellings.album_id=album.id where license.id = ?";
 		License record = (License) jdbcTemplate.queryForObject(query, new Object[] { id }, new LicenseRowMapper());
 		return record;
 	}
@@ -67,7 +67,7 @@ public class LicenseDaoImpl implements LicenseDao {
 	
 	public int getNumOfLicenses(String filterQuery, Date dateFrom, Date dateTo) {
 		if (filterQuery != null && !filterQuery.trim().isEmpty()) {
-			String SQL = "SELECT COUNT(*) FROM license RIGHT JOIN sellings ON license.selling_id=sellings.id WHERE LOWER(client) LIKE ? AND sell_date BETWEEN ? AND ?";
+			String SQL = "SELECT COUNT(*) FROM license INNER JOIN sellings ON license.selling_id=sellings.id WHERE LOWER(client) LIKE ? AND sell_date BETWEEN ? AND ?";
 			String wildcard = "%" + filterQuery.toLowerCase() + "%";
 			return jdbcTemplate.queryForObject(SQL, new Object[] { wildcard, dateFrom, dateTo }, Integer.class);
 		} else {
@@ -88,11 +88,14 @@ public class LicenseDaoImpl implements LicenseDao {
 
 	public Double getTotal(String filterQuery, Date dateFrom, Date dateTo) {
 		if (filterQuery != null && !filterQuery.trim().isEmpty()) {
-			String SQL = "SELECT SUM(period*price) FROM license INNER JOIN sellings ON license.selling_id=sellings.id WHERE LOWER(client) LIKE ? AND sell_date BETWEEN ? AND ?";
+			String SQL = "SELECT SUM(period*license.price*(1-(gonorar_percent+chief_part))) "+
+				"FROM (license INNER JOIN sellings ON license.selling_id=sellings.id) INNER JOIN album ON sellings.album_id=album.id " +
+				"WHERE LOWER(client) LIKE ? AND sell_date BETWEEN ? AND ?";
 			String wildcard = "%" + filterQuery.toLowerCase() + "%";
 			return jdbcTemplate.queryForObject(SQL, new Object[] { wildcard, dateFrom, dateTo }, Double.class);
 		} else {
-			String SQL = "SELECT SUM(period*price) FROM license INNER JOIN sellings ON license.selling_id=sellings.id WHERE sell_date BETWEEN ? AND ?";
+			String SQL = "SELECT SUM(period*license.price*(1-(gonorar_percent+chief_part))) "+
+				"FROM (license INNER JOIN sellings ON license.selling_id=sellings.id) INNER JOIN album ON sellings.album_id=album.id WHERE sell_date BETWEEN ? AND ?";
 			return jdbcTemplate.queryForObject(SQL, new Object[] { dateFrom, dateTo }, Double.class);
 		}
 	}
@@ -112,5 +115,5 @@ public class LicenseDaoImpl implements LicenseDao {
 						"(SELECT * FROM license WHERE license.selling_id=sellings.id)";
 		return jdbcTemplate.queryForObject(SQL, new Object[] {}, Integer.class);
 	}
-
+	
 }

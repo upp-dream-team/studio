@@ -18,6 +18,7 @@ public class LicenseRowMapper implements RowMapper<License>{
 		r.setPeriod(rs.getInt("period"));
 		r.setAlbumId(rs.getInt("album_id")); 
 		r.setSellingId(rs.getInt("selling_id"));
+		r.setIncomePerCent(1.0 - (rs.getDouble("gonorar_percent") + rs.getDouble("chief_part")));
 		r.setLicense(true);
 		return r;
 	}

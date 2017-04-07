@@ -8,6 +8,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -65,6 +67,7 @@ public class FinancialAffairsEventProcessorImpl implements FinancialAffairsEvent
 	private final int recordsPerPage = 10;
 	private int currentPage = 1;
 	private int rowHeight;
+	private NumberFormat formatter = new DecimalFormat("#0.00");
 	
 	private Dimension filtersPanelSize;
 	private Dimension formPanelSize;
@@ -443,18 +446,16 @@ public class FinancialAffairsEventProcessorImpl implements FinancialAffairsEvent
 		Double sum = 0.0;
 		
 		if (category.equals(options[1])){
-			// ���� ����������� ������
 			List<Record> records = financialAffairsService.getRecords(filterQuery, start, start+limit, dateFrom, dateTo);
 			table = buildRecordsTable(records, preferredSize);
 			for (Record r : records){
-				sum += r.getQuantity() * r.getAlbum().getPrice();
+				sum += r.getIncomePerCent() * r.getQuantity() * r.getAlbum().getPrice();
 			}
 		} else if(category.equals(options[2])) {
-			// ���� ������ ������
 			List<License> licenses = financialAffairsService.getLicenses(filterQuery, start, start+limit, dateFrom, dateTo);
 			table = buildLicenseTable(licenses, preferredSize);
 			for (License l : licenses){
-				sum += l.getPrice() * l.getPeriod();
+				sum += l.getIncomePerCent() * l.getPrice() * l.getPeriod();
 			}			
 		} else {
 			List<Selling> sellings = financialAffairsService.getSellings(filterQuery, start, limit, dateFrom, dateTo);	
@@ -463,9 +464,9 @@ public class FinancialAffairsEventProcessorImpl implements FinancialAffairsEvent
 			table = buildSellingsTable(sellings, preferredSize);
 			for (Selling s : sellings){
 				if (s.isLicense()){
-					sum += s.getPrice() * s.getPeriod();
+					sum += s.getIncomePerCent() * s.getPrice() * s.getPeriod();
 				} else {
-					sum += s.getQuantity() * s.getAlbum().getPrice();
+					sum += s.getIncomePerCent() * s.getQuantity() * s.getAlbum().getPrice();
 				}
 				
 			}
@@ -512,48 +513,50 @@ public class FinancialAffairsEventProcessorImpl implements FinancialAffairsEvent
 			}
 		};
 		
-		model.setColumnIdentifiers(new Object[] { "#", "Date", "Client", "Album", "Info", "Total", "", "" });
+		model.setColumnIdentifiers(new Object[] { "#", "Date", "Client", "Album", "Info", "Income percent", "Total", "", "" });
 		JTable table = new JTable(model);
 		TableColumnModel columnModel = table.getColumnModel();
 
 		TableCellRenderer buttonRenderer = new JTableButtonRenderer();
-		columnModel.getColumn(6).setCellRenderer(buttonRenderer);
 		columnModel.getColumn(7).setCellRenderer(buttonRenderer);
+		columnModel.getColumn(8).setCellRenderer(buttonRenderer);
 
-		for (int i : new int[]{0,5,6,7}){
-			columnModel.getColumn(i).setPreferredWidth(preferredSize.width/16);
+		for (int i : new int[]{0,5,6,7,8}){
+			columnModel.getColumn(i).setPreferredWidth(preferredSize.width/17);
 		}
-		columnModel.getColumn(1).setPreferredWidth(2*preferredSize.width/16);
-		columnModel.getColumn(2).setPreferredWidth(3*preferredSize.width/16);
-		columnModel.getColumn(3).setPreferredWidth(3*preferredSize.width/16);
-		columnModel.getColumn(4).setPreferredWidth(4*preferredSize.width/16);
+		columnModel.getColumn(1).setPreferredWidth(2*preferredSize.width/17);
+		columnModel.getColumn(2).setPreferredWidth(3*preferredSize.width/17);
+		columnModel.getColumn(3).setPreferredWidth(3*preferredSize.width/17);
+		columnModel.getColumn(4).setPreferredWidth(4*preferredSize.width/17);
 		
 		if(sellings.size() == 0) {
-        	model.insertRow(0, new Object[]{ "", "No results" , null , null, null, null, null, null });
+        	model.insertRow(0, new Object[]{ "", "No results" , null , null, null, null, null, null, null });
 		} else {
 			table.setRowHeight(rowHeight);
 
 			for (int i = 0; i < numRecords; i++) {
-				Object[] data = new Object[8];
+				Object[] data = new Object[9];
 				data[0] = Integer.toString((currentPage-1) * recordsPerPage + i + 1);
 				if (sellings.get(i).isLicense()){
 					License l = (License) sellings.get(i);
 					data[1] = l.getDate().toString();
 					data[2] = l.getClient();
 					data[3] = l.getAlbum().getTitle();
-					data[4] = "For " + l.getPeriod() + " months, price: " + l.getPrice();
-					data[5] = Double.toString(l.getPrice() * l.getPeriod());
-					data[6] = buildEditButton(l);
-					data[7] = buildDeleteButton(l);
+					data[4] = "for " + l.getPeriod() + " months, price: " + l.getPrice();		
+					data[5] = formatter.format(l.getIncomePerCent() * 100.0) + " %";
+					data[6] = formatter.format(l.getIncomePerCent() * l.getPrice() * l.getPeriod());
+					data[7] = buildEditButton(l);
+					data[8] = buildDeleteButton(l);
 				} else {
 					Record r = (Record) sellings.get(i);
 					data[1] = r.getDate().toString();
 					data[2] = r.getClient();
 					data[3] = r.getAlbum().getTitle();
-					data[4] = r.getQuantity() + " Quantity";
-					data[5] = Double.toString(r.getAlbum().getPrice() * r.getQuantity());
-					data[6] = buildEditButton(r);
-					data[7] = buildDeleteButton(r);
+					data[4] = r.getQuantity() + ", price: " + r.getAlbum().getPrice();
+					data[5] = formatter.format(r.getIncomePerCent() * 100.0) + " %";
+					data[6] = formatter.format(r.getIncomePerCent() * r.getAlbum().getPrice() * r.getQuantity());
+					data[7] = buildEditButton(r);
+					data[8] = buildDeleteButton(r);
 				}
 				model.insertRow(i, data);
 			}
@@ -588,37 +591,39 @@ public class FinancialAffairsEventProcessorImpl implements FinancialAffairsEvent
 			}
 		};
 
-		model.setColumnIdentifiers(new Object[] { "#", "Date", "Client", "Album", "Quantity", "Total", "", "" });
+		model.setColumnIdentifiers(new Object[] { "#", "Date", "Client", "Album", "Quantity", "Price", "Income percent", "Total", "", "" });
 		JTable table = new JTable(model);
 		TableColumnModel columnModel = table.getColumnModel();
 
 		TableCellRenderer buttonRenderer = new JTableButtonRenderer();
-		columnModel.getColumn(6).setCellRenderer(buttonRenderer);
-		columnModel.getColumn(7).setCellRenderer(buttonRenderer);
+		columnModel.getColumn(8).setCellRenderer(buttonRenderer);
+		columnModel.getColumn(9).setCellRenderer(buttonRenderer);
 
-		for (int i : new int[]{0,4,5,6,7}){
-			columnModel.getColumn(i).setPreferredWidth(preferredSize.width/13);
+		for (int i : new int[]{0,4,5,6,7,8,9}){
+			columnModel.getColumn(i).setPreferredWidth(preferredSize.width/15);
 		}
-		columnModel.getColumn(1).setPreferredWidth(2*preferredSize.width/13);
-		columnModel.getColumn(2).setPreferredWidth(3*preferredSize.width/13);
-		columnModel.getColumn(3).setPreferredWidth(3*preferredSize.width/13);
+		columnModel.getColumn(1).setPreferredWidth(2*preferredSize.width/15);
+		columnModel.getColumn(2).setPreferredWidth(3*preferredSize.width/15);
+		columnModel.getColumn(3).setPreferredWidth(3*preferredSize.width/15);
 		
 		if(records.size() == 0) {
-        	model.insertRow(0, new Object[]{ "", "No results" , null , null, null, null, null, null });
+        	model.insertRow(0, new Object[]{ "", "No results" , null , null, null, null, null, null, null, null });
 		} else {
 			table.setRowHeight(rowHeight);
 
 			for (int i = 0; i < numRecords; i++) {
 				Record r = records.get(i);
-				Object[] data = new Object[8];
+				Object[] data = new Object[10];
 				data[0] = Integer.toString((currentPage-1) * recordsPerPage + i + 1);
 				data[1] = r.getDate().toString();
 				data[2] = r.getClient();
 				data[3] = r.getAlbum().getTitle();
 				data[4] = Integer.toString(r.getQuantity());
-				data[5] = Double.toString(r.getAlbum().getPrice() * r.getQuantity());
-				data[6] = buildEditButton(r);
-				data[7] = buildDeleteButton(r);
+				data[5] = formatter.format(r.getAlbum().getPrice());
+				data[6] = formatter.format(r.getIncomePerCent() * 100.0) + " %";
+				data[7] = formatter.format(r.getIncomePerCent() * r.getAlbum().getPrice() * r.getQuantity());
+				data[8] = buildEditButton(r);
+				data[9] = buildDeleteButton(r);
 				model.insertRow(i, data);
 			}
 		}
@@ -650,14 +655,14 @@ public class FinancialAffairsEventProcessorImpl implements FinancialAffairsEvent
 			}
 		};
 
-		model.setColumnIdentifiers(new Object[] { "#", "Date", "Client", "Album", "Period", "Price", "Total", "", "" });
+		model.setColumnIdentifiers(new Object[] { "#", "Date", "Client", "Album", "Period", "Price", "Income percent", "Total", "", "" });
 		JTable table = new JTable(model);
 
 		TableCellRenderer buttonRenderer = new JTableButtonRenderer();
-		table.getColumnModel().getColumn(7).setCellRenderer(buttonRenderer);
 		table.getColumnModel().getColumn(8).setCellRenderer(buttonRenderer);
+		table.getColumnModel().getColumn(9).setCellRenderer(buttonRenderer);
 
-		for (int i : new int[]{0,4,5,6,7,8}){
+		for (int i : new int[]{0,4,5,6,7,8,9}){
 			table.getColumnModel().getColumn(i).setPreferredWidth(preferredSize.width/14);
 		}
 		table.getColumnModel().getColumn(1).setPreferredWidth(2*preferredSize.width/14);
@@ -668,16 +673,17 @@ public class FinancialAffairsEventProcessorImpl implements FinancialAffairsEvent
 
 		for (int i = 0; i < numLicenses; i++) {
 			License l = licenses.get(i);
-			Object[] data = new Object[9];
+			Object[] data = new Object[10];
 			data[0] = Integer.toString((currentPage-1) * recordsPerPage + i + 1);
 			data[1] = l.getDate().toString();
 			data[2] = l.getClient();
 			data[3] = l.getAlbum().getTitle();
 			data[4] = Integer.toString(l.getPeriod());
-			data[5] = Double.toString(l.getPrice());
-			data[6] = Double.toString(l.getPrice() * l.getPeriod());
-			data[7] = buildEditButton(l);
-			data[8] = buildDeleteButton(l);
+			data[5] = formatter.format(l.getPrice());
+			data[6] = formatter.format(l.getIncomePerCent() * 100.0) + " %";
+			data[7] = formatter.format(l.getIncomePerCent() * l.getPrice() * l.getPeriod());
+			data[8] = buildEditButton(l);
+			data[9] = buildDeleteButton(l);
 			model.insertRow(i, data);
 		}
 		table.getTableHeader().setBackground(Color.WHITE);
@@ -697,7 +703,7 @@ public class FinancialAffairsEventProcessorImpl implements FinancialAffairsEvent
 		Double totalForAllPages = 0.0;
 		
 		res.add(SwingUtils.createJLabelWithSpecifiedFont("Total for this page: ", f1));
-		res.add(SwingUtils.createJLabelWithSpecifiedFont(totalForPage.toString(), f2));
+		res.add(SwingUtils.createJLabelWithSpecifiedFont(formatter.format(totalForPage), f2));
 		if (category.equals(options[1])){
 			totalForAllPages = financialAffairsService.getTotalForRecords(query, dateFrom, dateTo);
 		} else if (category.equals(options[2])){
@@ -706,7 +712,7 @@ public class FinancialAffairsEventProcessorImpl implements FinancialAffairsEvent
 			totalForAllPages = financialAffairsService.getTotal(query, dateFrom, dateTo);
 		}
 		res.add(SwingUtils.createJLabelWithSpecifiedFont("Total for all pages: ", f1));
-		res.add(SwingUtils.createJLabelWithSpecifiedFont(totalForAllPages.toString(), f2));
+		res.add(SwingUtils.createJLabelWithSpecifiedFont(formatter.format(totalForAllPages), f2));
 		
 		return res;
 	}
