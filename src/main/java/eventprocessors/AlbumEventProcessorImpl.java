@@ -145,7 +145,7 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 		List<Album> albums = albumService.get(albumsPerPage, albumsPerPage*(currentPage-1) , currentFilterQuery);
 		
 		DefaultTableModel model = SwingUtils.getDefaultTableModel();
-        model.setColumnIdentifiers(new Object[] { "#", "Назва", "К-ть ліцензій" , "К-ть альбомів", "", "" });
+        model.setColumnIdentifiers(new Object[] { "#", "Title", "Licenses" , "Records", "", "" });
         JTable table = new JTable(model);
         table.setCellSelectionEnabled(false);
         table.setRowSelectionAllowed(false);
@@ -160,7 +160,7 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
         table.getColumnModel().getColumn(4).setCellRenderer(buttonRenderer);
         table.getColumnModel().getColumn(5).setCellRenderer(buttonRenderer);
         if(albums.size() == 0) {
-        	model.insertRow(0, new Object[]{ "", "Немає результатів" , null , null });
+        	model.insertRow(0, new Object[]{ "", "No results" , null , null });
         } else {
         	rowHeight = albumListPanel.getPreferredSize().height/12;
         	for (int i = 0; i < albums.size(); ++i){
@@ -229,10 +229,10 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 				createAlbumFormPanel.setSize(searchAndCreatePanelPreferredSize);
 				createAlbumFormPanel.setLayout(new GridLayout(1,3));
 				
-				JButton cancelBtn = new JButton("Відмінити");
+				JButton cancelBtn = new JButton("Cancel");
 				JPanel formPanel = new JPanel();
 				formPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-				JButton saveBtn = new JButton("Зберегти");
+				JButton saveBtn = new JButton("Save");
 				final JTextField titleInput = new JTextField(40);
 				final JTextField priceInput = new JTextField(40);
 				final JTextField musicianRoyaltiesInput = new JTextField(40);
@@ -385,10 +385,10 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 				createAlbumFormPanel.setSize(searchAndCreatePanelPreferredSize);
 				createAlbumFormPanel.setLayout(new GridLayout(1,3));
 				
-				JButton cancelBtn = new JButton("Відмінити");
+				JButton cancelBtn = new JButton("Cancel");
 				JPanel formPanel = new JPanel();
 				formPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-				JButton saveBtn = new JButton("Зберегти");
+				JButton saveBtn = new JButton("Save");
 				final JTextField titleInput = new JTextField(40);
 				UtilDateModel model = new UtilDateModel();
 				model.setSelected(true);
@@ -501,7 +501,7 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 	}
 	
 	private JButton buildAddSongsButton(final int albumId) {
-		final JButton btn = new JButton("Пісні");
+		final JButton btn = new JButton("Songs");
 		
 		btn.addActionListener(new ActionListener() {
 			
@@ -509,7 +509,7 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 				btn.setEnabled(false);
 				List<Song> songs = songService.getAllFromAlbumOrWithoutAlbum(albumId);
 				DefaultTableModel model = SwingUtils.getDefaultTableModel();
-		        model.setColumnIdentifiers(new Object[] { "Назва пісні", "",});
+		        model.setColumnIdentifiers(new Object[] { "Song title", "",});
 		        JTable table = new JTable(model);
 		        table.setCellSelectionEnabled(false);
 		        table.setRowSelectionAllowed(false);
@@ -519,7 +519,7 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 		        TableCellRenderer buttonRenderer = new JTableButtonRenderer();
 		        table.getColumnModel().getColumn(1).setCellRenderer(buttonRenderer);
 		        if(songs.size() == 0) {
-		        	model.insertRow(0, new Object[]{"Немає пісень, що не належать жодному альбому" , null });
+		        	model.insertRow(0, new Object[]{"No songs in album yet" , null });
 		        } else {
 		        	rowHeight = allSongListPanel.getSize().height/22;
 		        	for (int i = 0; i < songs.size(); ++i){
@@ -598,7 +598,7 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 		upperAlbumSongsSubPanel.removeAll();
 
 		DefaultTableModel model = SwingUtils.getDefaultTableModel();
-        model.setColumnIdentifiers(new Object[] { "Пісні  в Альбомі", "%", ""});
+        model.setColumnIdentifiers(new Object[] { "Songs in Album", "%", ""});
         JTable table = new JTable(model);
         table.setCellSelectionEnabled(false);
         table.setRowSelectionAllowed(false);
@@ -609,7 +609,7 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
         TableCellRenderer buttonRenderer = new JTableButtonRenderer();
         table.getColumnModel().getColumn(2).setCellRenderer(buttonRenderer);
         if(songsToAddToAlbum.size() == 0) {
-        	model.insertRow(0, new Object[]{"Ще немає пісень в альбомі" , null, null });
+        	model.insertRow(0, new Object[]{"No songs in album yet" , null, null });
         } else {
         	for(int i = 0; i < songsToAddToAlbum.size(); ++i ) {
 	        	rowHeight = upperAlbumSongsSubPanel.getSize().height/11;
@@ -665,7 +665,7 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
         List<Rozpodil> rozp = rozpodilDao.getRozpodilsBySongIdIncludingMusician(songId);
         List<String> musicianNames = musicianService.getMuscianNames();
         if(rozp.size() == 0) {
-        	model.insertRow(0, new Object[]{"Ще немає виконавців" , null, null, null });
+        	model.insertRow(0, new Object[]{"No musicians" , null, null, null });
         } else {
         	for(int i = 0; i < rozp.size(); ++i ) {
 	        	rowHeight = albumSongsPanel.getSize().height/22;
@@ -727,7 +727,7 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 			
 			public void actionPerformed(ActionEvent e) {
 				
-				String input = JOptionPane.showInputDialog ( "Нова частка від винагородження:" ); 
+				String input = JOptionPane.showInputDialog ( "New royalties:" ); 
 				double chastka = Double.valueOf(input);
 				Rozpodil r = new Rozpodil();
 				r.setSongId(songId);
@@ -744,7 +744,7 @@ public class AlbumEventProcessorImpl implements AlbumEventProcessor {
 	}
 
 	private JButton buildAddMusicianBtn(final int songId, final String songTitle, final JComboBox musicianList) {
-		JButton btn = new JButton("Додати виконавця");
+		JButton btn = new JButton("Add musician");
 		
 		btn.addActionListener(new ActionListener() {
 			

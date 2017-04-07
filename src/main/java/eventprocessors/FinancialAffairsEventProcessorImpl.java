@@ -58,7 +58,7 @@ public class FinancialAffairsEventProcessorImpl implements FinancialAffairsEvent
 	private JPanel tablePanel;
 	
 	private String currentFilterQuery;
-	final String[] options = { "всі продажі", "лише індивідуальні продажі", "лише продажі ліцензій" };
+	final String[] options = { "All", "Records", "Licenses" };
 	private String category = options[0];
 	private Date dateFrom;
 	private Date dateTo;
@@ -122,7 +122,7 @@ public class FinancialAffairsEventProcessorImpl implements FinancialAffairsEvent
 		res.setBackground(Color.WHITE);
 		res.setPreferredSize(preferredSize);
 
-		JLabel label = new JLabel("Показувати ");
+		JLabel label = new JLabel("What to display");
 		final JComboBox<String> comboBox = new JComboBox(options);
 		comboBox.setSelectedItem(category);
 
@@ -152,7 +152,7 @@ public class FinancialAffairsEventProcessorImpl implements FinancialAffairsEvent
 		res.setBackground(Color.WHITE);
 		res.setPreferredSize(preferredSize);
 		
-		JLabel fromL = new JLabel("Показати продажі з ");
+		JLabel fromL = new JLabel("From");
 		UtilDateModel model1 = new UtilDateModel(dateFrom);
 		model1.setSelected(true);
 		final JDatePickerImpl datePickerFrom = new JDatePickerImpl(new JDatePanelImpl(model1));
@@ -171,7 +171,7 @@ public class FinancialAffairsEventProcessorImpl implements FinancialAffairsEvent
 			
 		});
 		
-		JLabel toL = new JLabel(" до ");
+		JLabel toL = new JLabel("To");
 		UtilDateModel model2 = new UtilDateModel(dateTo);
 		model2.setSelected(true);
 		final JDatePickerImpl datePickerTo = new JDatePickerImpl(new JDatePanelImpl(model2));
@@ -204,9 +204,9 @@ public class FinancialAffairsEventProcessorImpl implements FinancialAffairsEvent
 		res.setBackground(Color.WHITE);
 		res.setPreferredSize(preferredSize);
 		
-		final JTextField filterQueryInput = SwingUtils.createTextFIeldWithPlaceholder(40, "Введіть пошуковий запит");
+		final JTextField filterQueryInput = SwingUtils.createTextFIeldWithPlaceholder(40, "Search for ...");
 		
-		JButton searchBtn = new JButton("Пошук");
+		JButton searchBtn = new JButton("Search");
 		searchBtn.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {     
@@ -231,7 +231,7 @@ public class FinancialAffairsEventProcessorImpl implements FinancialAffairsEvent
 		res.setBackground(Color.WHITE);
 		res.setPreferredSize(preferredSize);
 		
-		JButton addBtn = new JButton("Додати");
+		JButton addBtn = new JButton("Add");
 		addBtn.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent e) {
@@ -443,14 +443,14 @@ public class FinancialAffairsEventProcessorImpl implements FinancialAffairsEvent
 		Double sum = 0.0;
 		
 		if (category.equals(options[1])){
-			// лише індивідуальні продажі
+			// пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 			List<Record> records = financialAffairsService.getRecords(filterQuery, start, start+limit, dateFrom, dateTo);
 			table = buildRecordsTable(records, preferredSize);
 			for (Record r : records){
 				sum += r.getQuantity() * r.getAlbum().getPrice();
 			}
 		} else if(category.equals(options[2])) {
-			// лише продажі ліцензій
+			// пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 			List<License> licenses = financialAffairsService.getLicenses(filterQuery, start, start+limit, dateFrom, dateTo);
 			table = buildLicenseTable(licenses, preferredSize);
 			for (License l : licenses){
@@ -512,7 +512,7 @@ public class FinancialAffairsEventProcessorImpl implements FinancialAffairsEvent
 			}
 		};
 		
-		model.setColumnIdentifiers(new Object[] { "#", "Дата", "Клієнт", "Альбом", "Деталі", "Сума", "", "" });
+		model.setColumnIdentifiers(new Object[] { "#", "Date", "Client", "Album", "Info", "Total", "", "" });
 		JTable table = new JTable(model);
 		TableColumnModel columnModel = table.getColumnModel();
 
@@ -529,7 +529,7 @@ public class FinancialAffairsEventProcessorImpl implements FinancialAffairsEvent
 		columnModel.getColumn(4).setPreferredWidth(4*preferredSize.width/16);
 		
 		if(sellings.size() == 0) {
-        	model.insertRow(0, new Object[]{ "", "Немає результатів" , null , null, null, null, null, null });
+        	model.insertRow(0, new Object[]{ "", "No results" , null , null, null, null, null, null });
 		} else {
 			table.setRowHeight(rowHeight);
 
@@ -541,7 +541,7 @@ public class FinancialAffairsEventProcessorImpl implements FinancialAffairsEvent
 					data[1] = l.getDate().toString();
 					data[2] = l.getClient();
 					data[3] = l.getAlbum().getTitle();
-					data[4] = "на " + l.getPeriod() + " місяців за ціною " + l.getPrice();
+					data[4] = "For " + l.getPeriod() + " months, price: " + l.getPrice();
 					data[5] = Double.toString(l.getPrice() * l.getPeriod());
 					data[6] = buildEditButton(l);
 					data[7] = buildDeleteButton(l);
@@ -550,7 +550,7 @@ public class FinancialAffairsEventProcessorImpl implements FinancialAffairsEvent
 					data[1] = r.getDate().toString();
 					data[2] = r.getClient();
 					data[3] = r.getAlbum().getTitle();
-					data[4] = r.getQuantity() + " копій";
+					data[4] = r.getQuantity() + " Quantity";
 					data[5] = Double.toString(r.getAlbum().getPrice() * r.getQuantity());
 					data[6] = buildEditButton(r);
 					data[7] = buildDeleteButton(r);

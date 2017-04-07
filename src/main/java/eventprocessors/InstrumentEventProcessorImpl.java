@@ -125,7 +125,7 @@ public class InstrumentEventProcessorImpl implements InstrumentEventProcessor {
             }
         };
 
-        model.setColumnIdentifiers(new Object[]{"#", "Ім'я", "", ""});
+        model.setColumnIdentifiers(new Object[]{"#", "Name", "", ""});
         JTable table = new JTable(model);
         table.setCellSelectionEnabled(false);
         table.setRowSelectionAllowed(false);
@@ -138,7 +138,7 @@ public class InstrumentEventProcessorImpl implements InstrumentEventProcessor {
         table.getColumnModel().getColumn(2).setCellRenderer(buttonRenderer);
         table.getColumnModel().getColumn(3).setCellRenderer(buttonRenderer);
         if (instruments.size() == 0) {
-            model.insertRow(0, new Object[]{"", "Нічого не знайдено", null, null});
+            model.insertRow(0, new Object[]{"", "No results", null, null});
         } else {
             rowHeight = instrumentListPanel.getPreferredSize().height / 12;
             for (int i = 0; i < instruments.size(); ++i) {
@@ -165,7 +165,7 @@ public class InstrumentEventProcessorImpl implements InstrumentEventProcessor {
         deleteBtn.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                int dialogResult = JOptionPane.showConfirmDialog(null, "Видалити інструмент '" + instrument.getName() + "' ?");
+                int dialogResult = JOptionPane.showConfirmDialog(null, "Do you really want to delete '" + instrument.getName() + "' ?");
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     instrumentService.delete(instrument.getId());
                     mainPanel.removeAll();
@@ -201,11 +201,11 @@ public class InstrumentEventProcessorImpl implements InstrumentEventProcessor {
                 editInstrumentFormPanel.setSize(searchAndCreatePanelPreferredSize);
                 editInstrumentFormPanel.setLayout(new GridLayout(3, 2));
 
-                JLabel nameLabel = new JLabel("Ім'я");
+                JLabel nameLabel = new JLabel("Name");
                 final JTextField nameInput = new JTextField(40);
                 nameInput.setText(instrument.getName());
-                JButton cancelBtn = new JButton("Відміна");
-                JButton saveBtn = new JButton("Зберегти зміни");
+                JButton cancelBtn = new JButton("Cancel");
+                JButton saveBtn = new JButton("Save");
 
                 cancelBtn.addActionListener(new ActionListener() {
 
@@ -224,13 +224,13 @@ public class InstrumentEventProcessorImpl implements InstrumentEventProcessor {
                         String name = nameInput.getText().trim();
 
                         if (name == null || name.isEmpty()) {
-                            JOptionPane.showMessageDialog(null, "'Ім'я' - обов'зякове поле!");
+                            JOptionPane.showMessageDialog(null, "'Name' is empty");
                         } else {
                             instrument.setName(name);
                             try {
                                 instrumentService.update(instrument);
                             } catch (Exception ex) {
-                                JOptionPane.showMessageDialog(null, "Неможливо зберегти зміни до бази данних.");
+                                JOptionPane.showMessageDialog(null, "Error");
                             }
 
                             mainPanel.removeAll();
@@ -283,7 +283,7 @@ public class InstrumentEventProcessorImpl implements InstrumentEventProcessor {
 
         Icon addIcon = SwingUtils.createImageIcon("/icons/add.png", "Додати інструмент");
 
-        JButton addInstrumentBtn = new JButton("Додати інструмент", addIcon);
+        JButton addInstrumentBtn = new JButton("Add", addIcon);
         addInstrumentBtn.setBackground(Color.WHITE);
         addInstrumentBtn.addActionListener(new ActionListener() {
 
@@ -296,10 +296,10 @@ public class InstrumentEventProcessorImpl implements InstrumentEventProcessor {
                 createInstrumentFormPanel.setSize(searchAndCreatePanelPreferredSize);
                 createInstrumentFormPanel.setLayout(new GridLayout(3, 2));
 
-                JLabel nameLabel = new JLabel("Ім'я");
+                JLabel nameLabel = new JLabel("Name");
                 final JTextField nameInput = new JTextField(40);
-                JButton cancelBtn = new JButton("Відмінити");
-                JButton saveBtn = new JButton("Зберегти");
+                JButton cancelBtn = new JButton("Cancel");
+                JButton saveBtn = new JButton("Save");
 
                 cancelBtn.addActionListener(new ActionListener() {
 
@@ -318,14 +318,14 @@ public class InstrumentEventProcessorImpl implements InstrumentEventProcessor {
                         String name = nameInput.getText().trim();
 
                         if (name == null || name.isEmpty()) {
-                            JOptionPane.showMessageDialog(null, "'Ім'я' - обов'язкове поле!");
+                            JOptionPane.showMessageDialog(null, "Name is epmty");
                         } else {
                             Instrument m = new Instrument();
                             m.setName(name);
                             try {
                                 instrumentService.add(m);
                             } catch (Exception ex) {
-                                JOptionPane.showMessageDialog(null, "Неможливо зберегти до бази данних.");
+                                JOptionPane.showMessageDialog(null, "Error");
                             }
 
                             mainPanel.removeAll();
@@ -364,9 +364,9 @@ public class InstrumentEventProcessorImpl implements InstrumentEventProcessor {
         searchPanel.setLayout(new FlowLayout());
         searchPanel.setPreferredSize(preferredSize);
 
-        final JTextField filterQueryInput = SwingUtils.createTextFIeldWithPlaceholder(40, "Пошук...");
+        final JTextField filterQueryInput = SwingUtils.createTextFIeldWithPlaceholder(40, "Search...");
 
-        JButton searchBtn = new JButton("Пошук");
+        JButton searchBtn = new JButton("Search");
         searchBtn.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
